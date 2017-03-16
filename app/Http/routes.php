@@ -295,6 +295,11 @@ Route::post('/books/return/process', 'TransactionController@storeReturn');
 Route::get('/transactions', 'TransactionController@index');
 
     
+// class membership
+
+Route::match(array("get", "post"), '/report/classteacher', "ClassMemberController@classTeacherRemarks");
+
+
      // system settings
     
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');

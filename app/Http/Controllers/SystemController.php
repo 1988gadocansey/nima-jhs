@@ -383,6 +383,18 @@ class SystemController extends Controller
                 ->lists('name', 'code');
          return $program;
     }
+    public function interest() {
+        $interest = \DB::table('interest')->orderby("interest")
+                ->lists('interest', 'interest');
+         return $interest;
+    
+    }
+    public function conduct() {
+        $conduct = \DB::table('conduct')->orderby("con")
+                ->lists('con', 'con');
+         return $conduct;
+    
+    }
     
      public function getClassList() {
 //        if( @\Auth::user()->department=='top' || @\Auth::user()->role=="Accountant"|| @\Auth::user()->department=="Finance" ){
@@ -713,6 +725,17 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
                  
         return @$student;
      
+    }
+    public function getTeacherClass($staff) {
+        $array = $this->getSemYear();
+
+        $year = $array[0]->year;
+        $term = $array[0]->term;
+       $query= \DB::table('classes')->where('teacherId',$staff)->where('year',$year)
+                ->where('term',$term)
+                ->get();
+          
+             return $query[0]->name;
     }
      public function getStudentsTotalPerProgramLevel($program,$level){
          $array = $this->getSemYear();

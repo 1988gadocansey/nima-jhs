@@ -228,13 +228,15 @@
                     <div class="uk-dropdown uk-dropdown-scrollable">
                         <ul class="uk-nav uk-nav-dropdown">
                             @if( @Auth::user()->role=='Lecturer')
-                            <li> <a href='{!! url("/class/list") !!}'>My Class Lists</a></li>
+                            <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
                            
                             <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
-                             
-                              <li><a href='{!! url("/broadsheet/noticeboard") !!}'>Print Broadsheet</a></li>
-                            
-                          @elseif( @Auth::user()->role=='Admin' || @Auth::user()->department=='top' || @Auth::user()->role=='HOD')
+                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
+                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
+                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
+                            <li> <a href='{!! url("/report/classteacher") !!}'>Class Teacher's Report</a></li>
+                           
+                          @elseif( @Auth::user()->role=='Admin' || @Auth::user()->department=='top' || @Auth::user()->role=='HOD'|| @Auth::user()->role=='classTeacher')
                           
                             <li><a href='{!! url("/classes/") !!}'>View Classes</a></li>
 <!--                            <li><a href='{!! url("/create_course") !!}'>Add Courses</a></li>-->
@@ -244,13 +246,22 @@
                           
                             <li><a href='{!! url("/teachers/subject/allocation") !!}'>View Subject Allocations</a></li>
                           
-                            <li><a href='{!! url("/class/list") !!}'>Class Lists</a></li>
+                            <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
+                          @if( @Auth::user()->role=='headmaster')
+                            <li> <a href='{!! url("/report/headmaster") !!}'>Head Master's  Report</a></li>
+                            @endif
+                            @if( @Auth::user()->role=='headmaster')
+                            <li> <a href='{!! url("/report/classteacher") !!}'>Class Teacher's Report</a></li>
+                            @endif
                               <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
                          
                              
-                            <li><a href='{!! url("/mount_course") !!}'>Mount Courses for term</a></li>
+                           <li><a href='{!! url("/system/registration/batch") !!}'>Open Subjects for assessment</a></li>
+                          
                            
-                            <li><a href='{!! url("/mounted_view") !!}'>View Mounted Courses</a></li>
+                            <li><a href='{!! url("/mounted_view") !!}'>View running  Subjects</a></li>
+                             <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
+                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Exam Attendance Sheet</a></li>
                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
                            

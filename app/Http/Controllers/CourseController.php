@@ -1166,8 +1166,7 @@ class CourseController extends Controller
                           //  dd($course);
                     $lecturer= $courseArr[0]->teacherId;
             if ($resultOpen == 1) {
-                \DB::beginTransaction();
-                try {
+               
                     $host = $_SERVER['HTTP_HOST'];
                     $ipAddr = $_SERVER['REMOTE_ADDR'];
                     $userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -1299,7 +1298,7 @@ class CourseController extends Controller
                             
                   ////////////////////////////////////////////////////////////
                     // Starting position in subject
-                    ////////////////////////////////////////////////////////////
+                   ////////////////////////////////////////////////////////////
                             $rankQuery= Models\AcademicRecordsModel::where("courseCode",$courseCode)->where("class",$class)
                                                 ->where("term",$sem)
                                                 ->where("year",$year)->orderBy("total","Desc")->get();
@@ -1352,7 +1351,7 @@ class CourseController extends Controller
                           $subjectPosition=$in."/".$row2;
                          //echo "_";
                            //print_r($in_);
-                          $sql->Execute($in_);
+                          
                           Models\ClassMembersModel::where("student",$studentData)
                                         ->where("year",$year)
                                         ->where("term",$sem)
@@ -1370,9 +1369,7 @@ class CourseController extends Controller
                         }
                         
                     }
-               } catch (\Exception $e) {
-                   \DB::rollback();
-               }
+               
                 $mark = Models\AcademicRecordsModel::where("courseCode", $courseCode)->where('staff', $lecturer)->where('year', $year)->where('term', $sem)->paginate(100);
                //dd($mark);
                 $total = count($mark);
