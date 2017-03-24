@@ -74,6 +74,299 @@ class classMemberController extends Controller {
                         
     }
     
+    public function processClassTeacherReport(Request $request, SystemController $sys) {
+         // checked if we are in current or new academic year ie new term or new year
+        $array = $sys->getSemYear();
+        $term = $array[0]->term;
+        $year = $array[0]->year;
+        
+        $firstSQL = Models\ClassMembersModel::orderBy("year", "DESC")->select("year", "term")->first();
+        $years = $firstSQL->year;
+        $terms = $firstSQL->term;
+
+         $secondSQL = Models\ClassModel::orderBy("name")->select("name", "nextClass")->get();
+       
+         foreach ($secondSQL as $row){
+               $class[]=$row->name;
+                $nextclass[$row->name]=$row->nextClass;
+         }
+        //$class[]="ALUMNI";
+                
+     
+        $indexno=$request->input("student") ;
+
+        $class_id=$request->input("id") ;
+        $attend=$request->input("attendance") ;
+        $conduct=$request->input("conduct") ;		
+        $attitude=$request->input("attitude") ;		
+        $interest=$request->input("interest") ;		
+         $form=$request->input("class") ;
+        $class_teacher=$request->input("teacher") ;
+        $promoted=$request->input("promotion") ;
+         $counter=  $request->input("upper") ;
+	//dd($counter);	   
+   for($i=0;$i<$counter;$i++){
+ 
+
+        $student=$indexno[$i];
+
+        $id=$class_id[$i];
+        $attend_=$attend[$i];
+         $conduct_=$conduct[$i];		
+        $attitude_=$attitude[$i];		
+        $interest_=$interest[$i];		
+          $form_=$form[$i];		
+       
+        $class_teacher_=$class_teacher[$i];
+         
+        
+        $promoted_=$promoted[$i];
+ 
+         
+             if($year==$years && $term==$terms){
+                 //dd($years);
+                     Models\ClassMembersModel::where("id",$id)->update(
+                            array(
+                                "attendance"=>$attend_,
+                                "promotedTo"=>$promoted_,
+                                "conduct"=>$conduct_,
+                                "interest"=>$interest_,
+                                "attitude"=>$attitude_,
+                                "form_mast_report"=>$class_teacher_,
+
+                            )
+                            );
+             
+             }
+             else{
+                 $data=new Models\ClassMembersModel();
+                 $data->class=$form_;
+                 $data->student=$student;
+                 $data->attendance=$attend_;
+                 $data->promotedTo=$promoted_;
+                 $data->conduct=$conduct_;
+                 $data->interest=$interest_;
+                 $data->attitude=$attitude_;
+                 $data->form_mast_report=$class_teacher_;
+                 $data->term=$term;
+                 $data->year=$year;
+                 $data->save();
+                      
+                         
+               
+             }
+             
+             
+
+
+
+        }
+        return response()->json(['status'=>'success','message'=>' report successfully saved']);
+      
+
+     
+
+    }
+    
+    public function processHeadMasterReport(Request $request, SystemController $sys) {
+         // checked if we are in current or new academic year ie new term or new year
+        $array = $sys->getSemYear();
+        $term = $array[0]->term;
+        $year = $array[0]->year;
+        
+        $firstSQL = Models\ClassMembersModel::orderBy("year", "DESC")->select("year", "term")->first();
+        $years = $firstSQL->year;
+        $terms = $firstSQL->term;
+
+         $secondSQL = Models\ClassModel::orderBy("name")->select("name", "nextClass")->get();
+       
+         foreach ($secondSQL as $row){
+               $class[]=$row->name;
+                $nextclass[$row->name]=$row->nextClass;
+         }
+        //$class[]="ALUMNI";
+                
+      $form=$request->input("class") ;
+        $indexno=$request->input("student") ;
+
+        $class_id=$request->input("id") ;
+         
+         $counter=  $request->input("upper") ;
+           $headmaster=$request->input("headmaster") ;
+	//dd($headmaster);	   
+   for($i=0;$i<$counter;$i++){
+ 
+
+        $student=$indexno[$i];
+
+        $id=$class_id[$i];
+           $form_=$form[$i];
+         $headmaster_=$headmaster[$i];
+       
+        
+         
+         
+             if($year==$years && $term==$terms){
+                 //dd($years);
+                     Models\ClassMembersModel::where("id",$id)->update(
+                            array(
+                                
+                                "head_mast_report"=>$headmaster_,
+
+                            )
+                            );
+             
+             }
+             else{
+                 $data=new Models\ClassMembersModel();
+                 $data->class=$form_;
+                 $data->student=$student;
+                 
+                 $data->head_mast_report=$headmaster_;
+                 $data->term=$term;
+                 $data->year=$year;
+                 $data->save();
+                      
+                         
+               
+             }
+             
+             
+
+
+
+        }
+        return response()->json(['status'=>'success','message'=>' report successfully saved']);
+      
+
+     
+
+    }
+    
+    public function processHouseMasterReport(Request $request, SystemController $sys) {
+         // checked if we are in current or new academic year ie new term or new year
+        $array = $sys->getSemYear();
+        $term = $array[0]->term;
+        $year = $array[0]->year;
+        
+        $firstSQL = Models\ClassMembersModel::orderBy("year", "DESC")->select("year", "term")->first();
+        $years = $firstSQL->year;
+        $terms = $firstSQL->term;
+
+         $secondSQL = Models\ClassModel::orderBy("name")->select("name", "nextClass")->get();
+       
+         foreach ($secondSQL as $row){
+               $class[]=$row->name;
+                $nextclass[$row->name]=$row->nextClass;
+         }
+        //$class[]="ALUMNI";
+                
+     
+        $indexno=$request->input("student") ;
+
+        $class_id=$request->input("id") ;
+       		
+         $form=$request->input("class") ;
+         
+        $housemaster=$request->input("housemaster") ;
+         $counter=  $request->input("upper") ;
+	//dd($counter);	   
+   for($i=0;$i<$counter;$i++){
+ 
+
+        $student=$indexno[$i];
+
+        $id=$class_id[$i];
+       		
+          $form_=$form[$i];		
+       
+       $housemaster_=$housemaster[$i];
+         
+        
+ 
+         
+             if($year==$years && $term==$terms){
+                 //dd($years);
+                     Models\ClassMembersModel::where("id",$id)->update(
+                            array(
+                                 
+                                "house_mast_report"=>$housemaster_,
+
+                            )
+                            );
+             
+             }
+             else{
+                 $data=new Models\ClassMembersModel();
+                 $data->class=$form_;
+                 $data->student=$student;
+                 
+                 $data->house_mast_report=$housemaster_;
+                 $data->term=$term;
+                 $data->year=$year;
+                 $data->save();
+                      
+                         
+               
+             }
+             
+             
+
+
+
+        }
+        return response()->json(['status'=>'success','message'=>' report successfully saved']);
+      
+
+     
+
+    }
+    
+    
+    public function classHouseMasterReport(Request $request, SystemController $sys) {
+        
+        $array = $sys->getSemYear();
+                $term = $array[0]->term;
+                $year = $array[0]->year;
+                $house=$sys->houses(@\Auth::user()->fund);
+                $teacherDetails=$sys->teacherGender();
+                $data= \DB::table('classmembers')
+                
+                 ->join('student', 'student.indexNo', '=', 'classmembers.student')
+                ->where('student.house', $house)
+                ->where('classmembers.term', $term)
+                 ->where('classmembers.year', $year)
+                ->where('student.status', "In School")
+                         ->where('student.gender', strtoupper($teacherDetails->sex))
+                  ->select("student.name" ,"student.indexno","classmembers.id","classmembers.total","classmembers.class","classmembers.attendance"
+                          , "classmembers.conduct","classmembers.house_mast_report","classmembers.interest","classmembers.promotedTo","classmembers.attitude","classmembers.position","classmembers.form_mast_report");
+                  
+
+
+       if ($request->has('classs') && trim($request->input('classs')) != "") {
+             $data->where("classmembers.class", $request->input("classs", ""));
+        }
+        
+        if ($request->has('term') && trim($request->input('term')) != "") {
+            $data->where("classmembers.term", $request->input("term", ""));
+        }
+        if ($request->has('year') && trim($request->input('year')) != "") {
+             $data ->where("classmembers.year", $request->input("year", ""));
+        }
+        
+          
+        $request->flashExcept("_token");
+ 
+        
+         
+        $query=  $data->paginate(100);
+        
+        return view('house.houseMasterReport')->with("data", $query)->with("class",$sys->getClassList())
+                        ->with('year', $sys->years())->with("house", $sys->housemaster())
+                ;
+        
+                        
+    }
 
     public function classTeacherRemarks(Request $request, SystemController $sys) {
         
@@ -82,25 +375,26 @@ class classMemberController extends Controller {
                 $year = $array[0]->year;
                 $class=$sys->getTeacherClass(@\Auth::user()->fund);
                 $data= \DB::table('classmembers')
-                ->join('classes', 'classmembers.class', '=', 'classes.name')
+                
                  ->join('student', 'student.indexNo', '=', 'classmembers.student')
-                ->where('student.currentClass', $class)
+                ->where('classmembers.class', $class)
                 ->where('classmembers.term', $term)
                  ->where('classmembers.year', $year)
-                ->where('student.status', "In school")
-                  ->select("student.name","student.indexno","");
-                  
+                ->where('student.status', "In School")
+                     ->select("student.name" ,"student.indexno","classmembers.id","classmembers.total","classmembers.class","classmembers.attendance"
+                          , "classmembers.conduct","classmembers.interest","classmembers.form_mast_report","classmembers.house_mast_report","classmembers.promotedTo","classmembers.attitude","classmembers.position","classmembers.form_mast_report");
+               
 
 
        if ($request->has('classs') && trim($request->input('classs')) != "") {
-            $data->where("classmembers.class", $request->input("classs", ""));
+             $data->where("classmembers.class", $request->input("classs", ""));
         }
         
         if ($request->has('term') && trim($request->input('term')) != "") {
             $data->where("classmembers.term", $request->input("term", ""));
         }
         if ($request->has('year') && trim($request->input('year')) != "") {
-            $data->where("classmembers.year", $request->input("year", ""));
+             $data ->where("classmembers.year", $request->input("year", ""));
         }
         
           
@@ -108,13 +402,60 @@ class classMemberController extends Controller {
  
         
          
-        $query= $data->orderBy('classmembers.total','Desc')->paginate(500);
+        $query=  $data->paginate(100);
+        
         return view('classes.classTeacherRemarks')->with("data", $query)->with("class",$sys->getClassList())
-                        ->with('year', $sys->years())->with("sem", $term);
+                        ->with('year', $sys->years())->with("sem", $term)->with("conduct", $sys->conduct())
+                        ->with("interest", $sys->interest())->with("classTeacherReport", $sys->classTeacherReport())
+                ->with("attitude", $sys->attitude())->with("form", $sys->forms())
+                ;
+        
                         
     }
 
-     
+   public function headMastersReport(Request $request, SystemController $sys) {
+        
+        $array = $sys->getSemYear();
+                $term = $array[0]->term;
+                $year = $array[0]->year;
+                //$class=$sys->getTeacherClass(@\Auth::user()->fund);
+                $data= \DB::table('classmembers')
+                
+                 ->join('student', 'student.indexNo', '=', 'classmembers.student')
+                 
+                ->where('classmembers.term', $term)
+                 ->where('classmembers.year', $year)
+                ->where('student.status', "In School")
+                  ->select("student.name" ,"student.indexno","classmembers.id","classmembers.total","classmembers.class","classmembers.attendance"
+                          , "classmembers.conduct","classmembers.interest","classmembers.head_mast_report","classmembers.form_mast_report","classmembers.house_mast_report","classmembers.promotedTo","classmembers.attitude","classmembers.position","classmembers.form_mast_report");
+                  
+
+
+       if ($request->has('classs') && trim($request->input('classs')) != "") {
+             $data->where("classmembers.class", $request->input("classs", ""));
+        }
+        
+        if ($request->has('term') && trim($request->input('term')) != "") {
+            $data->where("classmembers.term", $request->input("term", ""));
+        }
+        if ($request->has('year') && trim($request->input('year')) != "") {
+             $data ->where("classmembers.year", $request->input("year", ""));
+        }
+        
+          
+        $request->flashExcept("_token");
+ 
+        
+         
+        $query=  $data->paginate(100);
+        
+        return view('classes.headMastersReport')->with("data", $query)->with("class",$sys->getClassList())
+                        ->with('year', $sys->years())->with("sem", $term)  ;
+                
+        
+                        
+    }
+  
     /**
      * Show the form for creating a new resource.
      *

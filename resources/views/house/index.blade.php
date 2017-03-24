@@ -108,7 +108,7 @@
                                         <tr align="">
                                             <td> {{ $data->perPage()*($data->currentPage()-1)+($index+1) }} </td>
                                             <td> {{ strtoupper(@$row->house) }}</td>
-                                            <td> {{ strtoupper(@$row->teacher->fullName)	 }}</td>
+                                            <td> {{ strtoupper(@$row->teacher->name)	 }}</td>
                                             <td style="text-align:center"> {{ @$row->year	 }}</td>
                                             <td style="text-align:center"> {{ @$sys->getTotalGenderByHouse($row->house,"Male")}}</td>
                                             <td style="text-align:center"> {{ @$sys->getTotalGenderByHouse($row->house,"Female")}}</td>

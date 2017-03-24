@@ -54,9 +54,10 @@ class TransactionController extends Controller
         $student=  explode(',',$request->input('q'));
         $student=$student[0];
         
-        $sql= Models\MemberModel::where("cardNo",$student)->get();
-        
-         $data= Models\BookModel::where("status","!=","BORROWED")->lists("book_title","book_id");
+        $sql= Models\StudentModel::where("indexNo",$student)->get();
+        //dd($sql);
+         $data= Models\BookModel::where("status","!=","BORROWED")->select("book_title","book_id","author","edition","book_pub","isbn")->get();
+        //dd($data);
          return view("transactions.process")->with("data",$sql)->with("sql", $data);
     }
      
@@ -85,8 +86,8 @@ class TransactionController extends Controller
       $phone=$request->input('phone');
       $name=$request->input('name');
         $member=$request->input('member');
-      $date= \Carbon\CarbonInterval::create($week=1)->fn();
-       
+      $date= date('d/m/Y', strtotime("+7 days"));  // add 7 days to current date
+     //  dd($request);
       for($i=0;$i<$total;$i++){
          $query=new Models\BorrowModel();
         

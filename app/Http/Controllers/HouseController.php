@@ -112,7 +112,7 @@ class HouseController extends Controller {
         }
     }
 
-    public function update(Request $request, $edit) {
+    public function update(Request $request, $edit,SystemController $sys) {
 
         \DB::beginTransaction();
         try {
@@ -121,14 +121,16 @@ class HouseController extends Controller {
                 'staff' => 'required',
             ]);
 
+$array = $sys->getSemYear();
 
+        $year = $array[0]->year;
             $name = $request->input('name');
 
             $staff = $request->input('staff');
 
 
 
-            $query = Models\HouseModel::where("id", $edit)->update(array("house" => $name, "master" => $staff));
+            $query = Models\HouseModel::where("id", $edit)->update(array("house" => $name, "master" => $staff,"year"=>$year));
 
             \DB::commit();
 

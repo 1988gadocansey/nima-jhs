@@ -222,8 +222,7 @@
                     </div>
                 </li>
                    
-            @if(@Auth::user()->role=='Dean' || @Auth::user()->role=='Registrar'|| @Auth::user()->role=='HOD'  || @Auth::user()->role=='Support' || @Auth::user()->role=='Lecturer' || @Auth::user()->department=='top')
-                <li data-uk-dropdown class="uk-hidden-small">
+                 <li data-uk-dropdown class="uk-hidden-small">
                     <a href="#"><i class="sidebar-menu-icon material-icons md-18">book</i><span>Academics Modules</span></a>
                     <div class="uk-dropdown uk-dropdown-scrollable">
                         <ul class="uk-nav uk-nav-dropdown">
@@ -234,9 +233,26 @@
                               <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
                            <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
                              <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
-                            <li> <a href='{!! url("/report/classteacher") !!}'>Class Teacher's Report</a></li>
+                        @endif
+                            @if( @Auth::user()->role=='Class Teacher')
+                            <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
                            
-                          @elseif( @Auth::user()->role=='Admin' || @Auth::user()->department=='top' || @Auth::user()->role=='HOD'|| @Auth::user()->role=='classTeacher')
+                            <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
+                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
+                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
+                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
+                            <li> <a href='{!! url("/report/classteacher") !!}'>Class Teacher's Report</a></li>
+                            @endif
+                             @if( @Auth::user()->role=='House Master')
+                            <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
+                           
+                            <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
+                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
+                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
+                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
+                            <li> <a href='{!! url("/report/housemaster") !!}'>House Masters Report</a></li>
+                            @endif
+                          @if( @Auth::user()->role=='Admin' || @Auth::user()->department=='top' || @Auth::user()->role=='HOD')
                           
                             <li><a href='{!! url("/classes/") !!}'>View Classes</a></li>
 <!--                            <li><a href='{!! url("/create_course") !!}'>Add Courses</a></li>-->
@@ -247,12 +263,10 @@
                             <li><a href='{!! url("/teachers/subject/allocation") !!}'>View Subject Allocations</a></li>
                           
                             <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
-                          @if( @Auth::user()->role=='headmaster')
+                          @if( @Auth::user()->role=='Head Master')
                             <li> <a href='{!! url("/report/headmaster") !!}'>Head Master's  Report</a></li>
                             @endif
-                            @if( @Auth::user()->role=='headmaster')
-                            <li> <a href='{!! url("/report/classteacher") !!}'>Class Teacher's Report</a></li>
-                            @endif
+                             
                               <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
                          
                              
@@ -273,7 +287,7 @@
                                </ul>
                     </div>
                 </li>
-                @endif
+               
              @if( @Auth::user()->department=='Finance' || @Auth::user()->department=='top')
                         @if(@Auth::user()->role=='FO')
                           <li data-uk-dropdown="justify:'#top_bar'">

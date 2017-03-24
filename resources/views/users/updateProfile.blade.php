@@ -36,29 +36,22 @@
  
   
      <div class="uk-width-large-8-10" style="margin-left: 100px">
-         <h3 class="heading_c uk-margin-bottom">Reset Account Password</h3>
-
+         <h3 class="heading_c uk-margin-bottom">Update Phone Number here</h3>
+         <p>All sms notifications would be send to this contact </p>
          <div class="md-card">
              <div class="md-card-content">
                 
-                 <form action="" method="post" class="form-horizontal row-border"   id="form" data-validate="parsley" >
+                 <form action="{{url('users/update/phone')}}" method="post" class="form-horizontal row-border"   id="form" data-validate="parsley" >
                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                      <div class="uk-grid" data-uk-grid-margin="">
                          
                         <div class="uk-width-medium-3-10">
-                            <label for="product_search_price">Old Password</label>
-                            <input type="password" class="md-input" name="oldPass" required="">
+                            <label for="product_search_price">Phone N<u>o</u></label>
+                            <input  type="text" class="md-input" name="phone" required="" maxlength="10"   pattern='^[0-9]{10}$'  >
                         </div>
-                       <div class="uk-width-medium-3-10">
-                            <label for="product_search_price">New Password</label>
-                            <input type="password" class="md-input" name="password" required="" min="7">
-                        </div>
-                        <div cclass="uk-width-medium-3-10">
-                            <label for="product_search_price">Confirm New Password</label>
-                            <input type="password" class="md-input" name="confirm" required=""  min="7">
-                        </div>
+                      
                         <div class="uk-width-medium-2-10 uk-text-center">
-                               <button type="submit" class="md-btn md-btn-primary uk-margin-small-top"><i class=" "></i>Reset</button>
+                               <button type="submit" class="md-btn md-btn-primary uk-margin-small-top"><i class=" "></i>Update</button>
                         </div>
                     </div>
                 </div>

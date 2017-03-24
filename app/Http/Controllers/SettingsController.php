@@ -45,6 +45,17 @@ class SettingsController extends Controller
     {
         return view('settings.sync');
     }
+    public function updateProfile(Request $request) {
+        $phone=$request->input("phone");
+       $query= User::where("id",@\Auth::user()->id)->update(array("phone"=>$phone));
+       if($query){
+           return redirect("/dashboard")->with("success", " <span style='font-weight:bold;font-size:13px;'> Phone Number updated successfully </span> ");;
+       }
+    else{
+        return redirect()->back();
+    }
+        
+    }
     public function logs(Request $request,SystemController $sys)
     {
           $log= Models\ActivityModel::query() ;

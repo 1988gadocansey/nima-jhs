@@ -57,10 +57,17 @@
                                <table id="paymentTable" class="uk-table"border="0" style="font-weight:bold">
 	  <tr id="paymentRow" payment_row="payment_row"> 
               <td>Book &nbsp;
-                  
-                       {!!   Form::select('book[]',$sql,old('religion',''),array("required"=>"required","placeholder"=>"select book","class"=>"md-input","id"=>"religion","v-model"=>"religion","v-form-ctrl"=>"","style"=>"","v-select"=>"religion")   )  !!}
-                                  
-	     </td>
+                                
+	      <select placeholder='select books' class="md-input" style="width:290px" name="book[]" required="required" class= 'md-input'v-model='book' v-form-ctrl='' v-select=''>
+                                           <option selected="">select books</option>
+                                           @foreach($sql as $item)
+                                        
+                                          <option value="{{$item->book_id}}">{{$item->book_title}} - {{$item->author}} - {{$item->book_pub}} - {{$item->edition}} - {{$item->isbn}}  </option>
+                                        @endforeach
+                                      </select>
+              
+              
+              </td>
 	   
           
 	  <td valign="top" id="insertPaymentCell"><button  type="button" id="insertPaymentRow" class="md-btn md-btn-primary md-btn-small " title='click to add more ' ><i class="sidebar-menu-icon material-icons">add</i></button></td></tr>
@@ -91,8 +98,8 @@
                                             <tr>
                                             <td  align=""> <div  align="right" >Card Number:</div></td>
                                         <td class="uk-text-bold">
-                                            {{ $data[0]->cardNo}}
-                                             <input type="hidden" name="member"   value="{{ $data[0]->cardNo}}" />
+                                            {{ @$data[0]->cardNo}}
+                                             <input type="hidden" name="member"   value="{{ @$data[0]->indexNo}}" />
                                             
                                         </td>
                                         </tr>
@@ -100,8 +107,8 @@
                                         <tr>
                                             <td  align=""> <div  align="right" >Full Name</div></td>
                                             <td class="uk-text-bold">
-                                            {{ $data[0]->name}}
-                                               <input type="hidden" name="name" id="name" value="{{ $data[0]->name}}" />
+                                            {{ @$data[0]->name}}
+                                               <input type="hidden" name="name" id="name" value="{{ @$data[0]->name}}" />
                                            
                                         </td>
                                         </tr>
@@ -109,50 +116,27 @@
                                           <tr>
                                             <td  align=""> <div  align="right" >Phone:</div></td>
                                         <td class="uk-text-bold">
-                                            {{ $data[0]->contact}}
-                                             <input type="hidden" name="phone" id="phone" value="{{ $data[0]->contact}}" />
+                                            {{ $data[0]->phone}}
+                                             <input type="hidden" name="phone" id="phone" value="{{ $data[0]->phone}}" />
                                             
                                         </td>
                                         </tr>
                                          
-                                        @if(@$data[0]->category=='CHILDREN')
-                                         <tr>
-                                            <td  align=""> <div  align="right" >Parent</div></td>
-                                            <td class="uk-text-bold">
-                                            {{ $data[0]->parent}}
+                                          <tr>
+                                            <td  align=""> <div  align="right" >Class:</div></td>
+                                        <td class="uk-text-bold">
+                                            {{ $data[0]->currentClass}}
                                              
                                         </td>
                                         </tr>
-                                        <tr>
-                                            <td  align=""> <div  align="right" >Parent Phone</div></td>
-                                            <td class="uk-text-bold">
-                                            {{ $data[0]->parent_phone}}
-                                             
-                                        </td>
-                                        </tr>
-                                        <tr>
-                                            <td  align=""> <div  align="right" >School</div></td>
-                                            <td class="uk-text-bold">
-                                            {{ $data[0]->school}}
-                                             
-                                        </td>
-                                        </tr>
-                                        <tr>
-                                            <td  align=""> <div  align="right" >Class</div></td>
-                                            <td class="uk-text-bold">
-                                            {{ $data[0]->class}}
-                                             
-                                        </td>
-                                        </tr>
-                                        @endif
                                          
                                         </table>
                                     </td>
                                     <td valign="top">
                                         <img   style="width:150px;height: auto;"  <?php
-                                        $pic = $data[0]->cardNo;
-                                        echo $sys->picture("{!! url(\"public/albums/staff/$pic.jpg\") !!}", 90)
-                                        ?>   src='{{url("public/albums/staff/$pic.jpg")}}' alt="  Affix staff picture here"    />
+                                        $pic = $data[0]->indexNo;
+                                        echo $sys->picture("{!! url(\"public/albums/students/$pic.jpg\") !!}", 90)
+                                        ?>   src='{{url("public/albums/students/$pic.jpg")}}' alt="  Affix student picture here"    />
                                     </td>
                                 </tr>
                             </table>

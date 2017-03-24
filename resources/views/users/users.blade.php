@@ -45,7 +45,7 @@
                                     <div class="uk-width-medium-1-2">
                                         <label>Staff ID</label>
 
-                                       <input type="text" class="md-input md-input-success label-fixed" required="" name="staffID"/>
+                                       <input type="number" class="md-input md-input-success label-fixed" required="" name="staffID"/>
 
                                     </div>
                                     <div class="uk-width-medium-1-2">
@@ -55,21 +55,21 @@
                                 </div>
                             </div>
                             <div class="uk-form-row">
-                                <label>Email</label>
-                                <input type="email"   name="email" class="md-input md-input label-fixed md-input-success"  />
+                                <label>Email(username)</label>
+                                <input type="email" required="" name="email" class="md-input md-input label-fixed md-input-success"  />
                             </div>
                            @if( @\Auth::user()->department=='top' )
                             <div class="uk-form-row">
                                 <label>Role</label>
                                 <p></p>
-                                {!!  Form::select('role', array('Admin'=>'Administrator','Director'=>'Director','Libarian'=>'Libarian'), null, ['placeholder' => 'select role','class'=>'md-input','required'=>''], old("","")); !!}
+                               {!!  Form::select('role', array('Accountant'=>'Accountant','Lecturer'=>'Lecturer','HOD'=>'HOD','Support'=>'Department Registrars','Registrar'=>'School Registrar','top'=>'Senior Officer'), null, ['placeholder' => 'select role','class'=>'md-input','required'=>''], old("","")); !!}
 
                             </div>
                            @else
                            <div class="uk-form-row">
                                 <label>Role</label>
                                 <p></p>
-                               {!!  Form::select('role', array('Admin'=>'Administrator','Director'=>'Director','Libarian'=>'Libarian'), null, ['placeholder' => 'select role','class'=>'md-input','required'=>''], old("","")); !!}
+                               {!!  Form::select('role', array('Lecturer'=>'Lecturer','HOD'=>'HOD','Support'=>'Department Registrars'), null, ['placeholder' => 'select role','class'=>'md-input','required'=>''], old("","")); !!}
 
                             </div>
                            @endif
@@ -84,7 +84,7 @@
                                 <label>Department/school</label>
                                 <p></p>
                                {!! Form::select('department', 
-                            (['' => 'Select department or school'] +$obj->getDepartmentList()  ), 
+                            (['' => 'Select department or school'] +$obj->getDepartmentList()+$obj->getSchoolList()  ), 
                             old("",""),
                             ['class' => 'md-input','id'=>"parent"] )  !!}
 
@@ -158,7 +158,7 @@
            
         
           {data: 'id', name: 'users.id'},
-           {data: 'emp_number', name: 'staffs.emp_number'},
+           {data: 'staffID', name: 'tpoly_workers.staffID'},
            
             {data: 'Photo', name: 'Photo', orderable: false, searchable: false},
             

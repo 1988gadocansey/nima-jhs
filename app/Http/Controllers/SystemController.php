@@ -37,6 +37,7 @@ class SystemController extends Controller
        
          
     }
+    
     public function age($birthdate, $pattern = 'eu')
         {
             $patterns = array(
@@ -385,13 +386,37 @@ class SystemController extends Controller
     }
     public function interest() {
         $interest = \DB::table('interest')->orderby("interest")
-                ->lists('interest', 'interest');
+                ->select('interest', 'interest')->get();
          return $interest;
     
     }
     public function conduct() {
         $conduct = \DB::table('conduct')->orderby("con")
-                ->lists('con', 'con');
+                ->select('con', 'con')->get();
+         return $conduct;
+    
+    }
+    public function forms() {
+        $form = \DB::table('classes')->orderby("name")
+                ->select('name', 'name')->get();
+         return $form;
+    
+    }
+     public function housemaster() {
+        $form = \DB::table('housemasterreport')->orderby("con")
+                ->select('con', 'con')->get();
+         return $form;
+    
+    }
+    public function attitude() {
+        $attitude = \DB::table('attitude')->orderby("att")
+                ->select('att', 'att')->get();
+         return $attitude;
+    
+    }
+    public function classTeacherReport() {
+        $conduct = \DB::table('classteacherreport')->orderby("con")
+                ->select('con', 'con')->get();
          return $conduct;
     
     }
@@ -677,7 +702,22 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
         $sql =\DB::table('academicsettings')->where('id', \DB::raw("(select max(`ID`) from academicsettings)"))->get();
         return $sql;
     }
-     
+     public function houses(){
+            $teacher=@\Auth::user()->fund;
+             
+             $data=\DB::table('house')->where('master',$teacher)->first();
+             return $data->house;
+      }
+      
+       public function teacherGender(){
+            $teacher=@\Auth::user()->fund;
+             
+             $data=\DB::table('staffs')->where('emp_number',$teacher)->first();
+             return $data;
+      }
+      
+      
+      
     public function getProgram($code){
         
         $programme = \DB::table('programme')->where('code',$code)->get();
@@ -734,7 +774,7 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
        $query= \DB::table('classes')->where('teacherId',$staff)->where('year',$year)
                 ->where('term',$term)
                 ->get();
-          
+         // dd($query);
              return $query[0]->name;
     }
      public function getStudentsTotalPerProgramLevel($program,$level){

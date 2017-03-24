@@ -22,4 +22,7 @@ class ClassMembersModel extends Model
     public function students(){
         return $this->belongsTo('App\Models\StudentModel', "student","indexNo");
     }
+     public function classes(){
+        return $this->belongsTo('App\Models\ClassModel', "class","name");
+    }
 }

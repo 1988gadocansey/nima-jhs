@@ -31,7 +31,10 @@ class HomeController extends Controller
      */
     public function index(SystemController $sys)
     {
-        
+         if(@\Auth::user()->phone==""){
+            return view("users.updateProfile");
+        }
+        else{
         $lastVisit=\Carbon\Carbon::createFromTimeStamp(strtotime(@\Auth::user()->last_login))->diffForHumans();
          
         $academicDetails=$sys->getSemYear();
@@ -64,7 +67,7 @@ class HomeController extends Controller
                            
         
          
-        
+        }
     }
     public function accountStatement(Request $request, SystemController $sys) {
         $student=@\Auth::user()->username;

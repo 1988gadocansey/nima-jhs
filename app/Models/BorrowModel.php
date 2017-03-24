@@ -29,7 +29,7 @@ class BorrowModel extends Model
         return $this->belongsTo('App\Models\BookModel', "book_id","book_id");
     }
     public function member(){
-        return $this->belongsTo('App\Models\MemberModel', "member_id","cardNo");
+        return $this->belongsTo('App\Models\StudentModel', "cardNo","cardNo");
     }
       public function books(){
         return $this->hasMany('App\Models\BookModel', "book_id","book_id");

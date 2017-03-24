@@ -21,6 +21,6 @@ class HouseModel extends Model
     protected $guarded = ['id'];
     public $timestamps = false;
    public function teacher(){
-        return $this->belongsTo('App\Models\WorkerModel', "master","staffID");
+        return $this->belongsTo('App\Models\WorkerModel', "master","emp_number");
     }
 }

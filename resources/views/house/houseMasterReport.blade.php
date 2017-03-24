@@ -93,7 +93,7 @@ border-radius: 0;
                            
      </div>
  </div>
-  <h5 class="heading_a">Class Teacher Remarks</h5>
+  <h5 class="heading_a">House Masters Report</h5>
  <div class="uk-width-xLarge-1-1">
     <div class="md-card">
         <div class="md-card-content">
@@ -159,24 +159,8 @@ border-radius: 0;
                                      <th data-column-id="Student"   data-toggle="tooltip">Student</th>
                                      <th data-column-id="Class" data-type=" " data-toggle="tooltip">Class</th>
                                     <th style="text-align" data-type="string" data-column-id="Total Score" style="text-align:center">Total Score</th>
-                                   
-                                    <th data-column-id="Attendance" data-order="asc" style="text-align:">Attendance</th>
-                                       
-                                       <th data-column-id="Conduct" style="text-align: ">Conduct</th>
-                                     <th data-column-id="Attitude">Attitude</th>
-                                    <th data-column-id="Interest" data-order="asc" style="text-align: ">Interest</th>
-                                
-                                     <th data-column-id="Class teacher Report" data-order="asc" style="text-align: ">Class Teacher's Report</th>
-                                    <th data-column-id="Class teacher Report" data-order="asc" style="text-align: ">House Masters's Report</th>
-                                     <th data-column-id="Class teacher Report" data-order="asc" style="text-align: ">Head Master's Report</th>
-                                   
-                                   
-                                       <?php  if($sem=='3'){?>
-                                       <th data-column-id="Promoted" data-order="asc" style="text-align: ">Promoted to</th>
-                                     
-                                       <?php }?>
-                                       
-                                       <th data-column-id="Position" data-order="asc" style="text-align: ">Position</th>
+                                    
+                                        <th data-column-id="Position" data-order="asc" style="text-align: ">House Masters Report</th>
                                       
                                 </tr>
                             </thead>
@@ -191,61 +175,14 @@ border-radius: 0;
                                             <td> {{ strtoupper(@$row->class)	 }}</td>
                                             <td> {{ @$row->total 	 }}</td>
                                              
-                                           <td><input style="text-align: center;width:87px" name="attendance[]" maxlength="3" class="marks" type="text" value="{{@$row->attendance}}"/></td>
-                                               <td>
-                                                 <select placeholder='select conduct' class="selects conduct" style="" name="conduct[]"  class= 'md-input'>
-                                                    
-                                                    @foreach($conduct as $conduct=>$con)
-
-                                                   <option <?php
-                                                                            if ($con->con==@$row->conduct) {
-                                                                                echo "selected='selected'";
-                                                                            }
-                                                                            ?> value="{{$con->con}}">{{$con->con }}</option>
-                                                 @endforeach
-                                                    </select>
-                                           </td>
+                                            
                                            
-                                           <td>
-                                                 <select placeholder='select attitude' class="selects attitude" style="" name="attitude[]"  class= 'md-input'>
-                                                    
-                                                    @foreach($attitude as $attitudes=>$att)
-
-                                                   <option <?php
-                                                                            if ($att->att==@$row->attitude) {
-                                                                                echo "selected='selected'";
-                                                                            }
-                                                                            ?> value="{{$att->att}}">{{$att->att }}</option>
-                                                 @endforeach
-                                                    </select>
-                                           </td>
-                                           <td>
-                                                 <select placeholder='select interest' class="selects interest" style="" name="interest[]"  class= 'md-input'>
-                                                    
-                                                    @foreach($interest as $interests=>$int)
-
-                                                   <option <?php
-                                                                            if ($int->interest==@$row->interest) {
-                                                                                echo "selected='selected'";
-                                                                            }
-                                                                            ?> value="{{$int->interest}}">{{$int->interest }}</option>
-                                                 @endforeach
-                                                    </select>
-                                           </td>
-                                           <td>
-                                                    <select placeholder='select teacher remarks' class="selects teacher" style="" name="teacher[]"  class= 'md-input'>
-                                                    
-                                                    @foreach($classTeacherReport as $item=>$rows)
-
-                                                   <option <?php
-                                                                            if ($rows->con==@$row->form_mast_report) {
-                                                                                echo "selected='selected'";
-                                                                            }
-                                                                            ?> value="{{$rows->con}}">{{$rows->con }}</option>
-                                                 @endforeach
-                                                    </select>
-                                           </td>
+                                            
                             
+                                          
+                                                 <td><input style="width:100%" name="housemaster[]"  class="marks" type="text" value="{{@$row->house_mast_report}}"/></td>
+                                         
+                                          
                             
                             
                             
@@ -257,30 +194,8 @@ border-radius: 0;
                             <input type="hidden" class="id"name="id[]" value="{{@$row->id}}"/>
                                             <input type="hidden" class="class"name="class[]" value="{{@$row->class}}"/>
                                              <input type="hidden" class="student"name="student[]" value="{{@$row->indexno}}"/>
-                                             <td> {{ strtoupper(@$row->house_mast_report) }}</td>
-                                              <td> {{ strtoupper(@$row->head_mast_report) }}</td>
-                                              <?php  if($sem=='3'){?>
-                                             <td>
+                                               
                                              
-                                              <td>
-                                                 <select placeholder='select promotion to' class="selects class" style="" name="promotion[]"  class= 'md-input'>
-                                                    
-                                                    @foreach($form as $promotion=>$promo)
-
-                                                   <option <?php
-                                                                            if ($promo->name==@$row->promotedTo) {
-                                                                                echo "selected='selected'";
-                                                                            }
-                                                                            ?> value="{{$promo->name}}">{{$promo->name }}</option>
-                                                 @endforeach
-                                                    </select>
-                                           </td>
-                                             
-                                             
-                                             </td>
-                                       <?php }?>
-                                              <td> {{ @$row->position 	 }}</td>
-                                            
                                           
                                         </tr>
                                              @endforeach
@@ -343,7 +258,7 @@ $(".parent").on('change',function(e){
                                     $.ajax({
                                      
                                             type: "POST",
-                                            url:"{{ url('/report_classteacher')}}",
+                                            url:"{{ url('/report_housemaster')}}",
                                             data: $('#form').serialize(), //your form data to post goes 
                                             dataType: "json",
                                     }). done(function(data){
@@ -409,11 +324,7 @@ var vm = new Vue({
   },
  data : {
        
-   interest:"{{$row->interest}}",
-   conduct:"{{$row->conduct}}",
-   attitude:"{{$row->attitude}}",
-   attendance:"{{$row->attendance}}",
-   teacher:"{{$row->form_mast_report}}",
+   
  options: [    ]  
     
   },

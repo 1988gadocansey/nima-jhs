@@ -297,7 +297,16 @@ Route::get('/transactions', 'TransactionController@index');
     
 // class membership
 
-Route::match(array("get", "post"), '/report/classteacher', "ClassMemberController@classTeacherRemarks");
+Route::get( '/report/classteacher', "ClassMemberController@classTeacherRemarks");
+Route::post('/report_classteacher', 'ClassMemberController@processClassTeacherReport');
+
+// house master report
+
+Route::get( '/report/housemaster', "ClassMemberController@classHouseMasterReport");
+Route::post('/report_housemaster', 'ClassMemberController@processHouseMasterReport');
+
+Route::get( '/report/headmaster', "ClassMemberController@headMastersReport");
+Route::post('/report_headmaster', 'ClassMemberController@processHeadMasterReport');
 
 
      // system settings
@@ -323,8 +332,8 @@ Route::match(array("get", "post"), '/report/classteacher', "ClassMemberControlle
     Route::match(array("get", "post"), '/broadsheet/naptex', "CourseController@naptexBroadsheet");
     
     Route::match(array("get", "post"), '/groups/create', "GroupController@createGroup");
-      Route::match(array("get", "post"),'/systems/users/update','SettingsController@updateUsers');
-    
+       Route::match(array("get", "post"),'/systems/users/update','SettingsController@updateUsers');
+      Route::post('users/update/phone','SettingsController@updateProfile');
    Route::get('/applicants/view/','ApplicantController@index');
    Route::get('/applicants/sms/','ApplicantController@admitMessage');
    Route::get('/systems/cards/','ApplicantController@cards');
