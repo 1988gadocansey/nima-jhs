@@ -1,143 +1,114 @@
-@extends('layouts.app')
-
- 
-@section('style')
-       @inject('obj', 'App\Http\Controllers\SystemController')
-@endsection
- @section('content')
-   <div class="md-card-content">
-@if(Session::has('success'))
-            <div style="text-align: center" class="uk-alert uk-alert-success" data-uk-alert="">
-                {!! Session::get('success') !!}
-            </div>
- @endif
- 
-    @if(Session::has('error'))
-            <div style="text-align: center" class="uk-alert uk-alert-danger" data-uk-alert="">
-                {!! Session::get('error') !!}
-            </div>
- @endif
- @if (count($errors) > 0)
-
-    <div class="uk-form-row">
-        <div class="uk-alert uk-alert-danger" style="background-color: red;color: white">
-
-              <ul>
-                @foreach ($errors->all() as $error)
-                  <li> {{  $error  }} </li>
-                @endforeach
-          </ul>
-    </div>
-  </div>
-@endif
-  </div>
-  
- </div> 
- <h4 class="heading_c uk-margin-bottom">Reset Account Password</h4>
- 
- <div class="uk-width-large-8-10" style="margin-left: 50px">
-    <div class="md-card">
-        <div class="md-card-content">
-             <form action="" method="post" class="form-horizontal row-border"   id="form" data-validate="parsley" >
-             <div class="uk-grid" data-uk-grid-margin>
-                  <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                        <div class="uk-width-medium-1-2">
-                            <div class="uk-form-row">
-                                <div class="uk-grid">
-                                    <div class="uk-width-medium-1-2">
-                                        <label> User Name</label>
-                                        <input type="text" class="md-input" name="username" required="" value=""  />
-                                    </div>
-
-                                    <div class="uk-width-medium-1-2">
-                                        <label>Old Password</label>
-                                        <input type="text" class="md-input" name="username" required=""   value=""/>
-                                    </div>
-                                 
-                                </div>
-                                 <div class="uk-grid">
-                                    <div class="uk-width-medium-1-2">
-                                        <label> User Name</label>
-                                        <input type="text" class="md-input" name="username" required="" value=""  />
-                                    </div>
-
-                                    <div class="uk-width-medium-1-2">
-                                        <label>Old Password</label>
-                                        <input type="text" class="md-input" name="username" required=""   value=""/>
-                                    </div>
-                                 
-                                </div>
-                            
-                            </div>
-                        </div>
-                    <div class="uk-width-medium-1-2">
-                      
-                            <div class="uk-form-row">
-                                <div class="uk-grid">
-                                    
-                                    
-                                    <div class="uk-width-medium-1-2">
-                                        <label> New Password</label>
-                                        <input type="text" class="md-input" name="confirm" required=""   value=""/>
-                                    </div>
+$records=  Models\AcademicRecordsModel::where("stuId",$sql)->groupBy("year")->groupBy("class")->orderBy("class")->get();
                                 
-                                <div class="uk-width-medium-1-2">
-                                    <label> Email</label>
-                                       
-                                       <input type="email" class="md-input" name="email" value="" required="" />
-                                </div>
-                                </div>
-                            </div>
-                                 
+
+	  ?>
+
+      
+        <table width='800px' style="text-align:left; ;font-size: 16px" height="90" class=""  border="0" style="margin-left:32px">
+        <tr>
+        
+          <td  style=" " align="left"> 
+            <?php  
+               
+            foreach ($records as $row){
+            for($i=1;$i<3;$i++){
+             $query=  Models\AcademicRecordsModel::where("stuId",$sql)->where("year",$row->year)->where("term",$i)->get()->toArray();
+                
+              
+                if(count($query)>0){
+
+                echo "<div class='uk-text-bold' align='left' style='margin-left:33px'>Year : ".$row->year."    ";
+                echo ", Term : ".$i;
+                 echo ", Class :  " .$row->class." <hr/></div>";
+                 
+
+                  
+                 
+              
+                
+         ?>
+         
+            <div class="uk-overflow-container">
+           <table style="margin-left:32px"  border="0" style=""width='940px'  class="uk-table uk-table-striped ">
+                <thead >
+                    <tr class="uk-text-bold" style="background-color:#EAF2D3;color:white;">
+                     <th>SUBJECT</th>
+
+                    <th style=';' class='ui-corner-top'>MARKS SCORED</th>
+                    <th style='' class='ui-corner-top'>POSITION</th>
+                    <th style='text-align: center' style='width:15%;' class='ui-corner-top'>GRADE</th>
+                    <th style='text-align:left;padding-left:1%;' class='ui-corner-top'>REMARKS</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                  <?php 
+		  $classSize=count($query);
+                  $ttotal=0.00;
+                   $aggregade=0.00;
+                foreach ($query as $rs){
+
+                 
+
+                ?>
+                  <tr>
+                   <?php $object=$sys->getCourseByCodeObject($rs['courseId']);  ?> 
+                    <td> <?php 
+			 echo strtoupper(@$object[0]->name);?> </td>	
+                     
+                    <td><?php echo $rs['total']?></td>
+                    <td><?php echo $rs['posInSubject'];?></td>
+                    <?php
+                    
+                        $programme=$sys->getCourseProgrammeMounted($rs['courseId']);
+                            
+                            $program=$sys->getProgramArray($programme);
+                              $gradeSys=$sys->getProgramByGradeSystem($programme);
+                              
+                            $gradeArray = $sys->getGrade($rs['total'], $gradeSys);
                            
-                        </div>
+                              $grade = $gradeArray[0]->grade;
+                              $gradePoint=@$gradeArray[0]->value;
+                               $comment=@$gradeArray[0]->comment;
+                    
+                    ?>
+                    <td style='text-align: center'><?php echo $grade;$ttotal+=$rs['total']; ?></td>
+                    <td> 
+                      <?php
+                      
+                     			  echo  strtoupper($comment);
+				   
+				 
+				  $aggregade+=$gradePoint;
+				  ?>
+                    </td>
                      
-                    </div>
+	  
+                    <?php 
+                     } ?>
+                  </tr>
+                  <tr>
                      
-              
-
-                 <div class="uk-grid" align='center'>
-                            <div class="uk-width-1-1">
-                                <button type="submit" class="md-btn md-btn-primary"><i class=" "></i>update</button>
-                            </div>
-                        </div>
-        </form>
- 
- </div>
-    </div>
- </div>
-@endsection
-@section('js')
+                       
+                      <td colspan="1"><div align="right" class="uk-text-bold">Total Score: </div></td>
+                    <td><span class="uk-text-bold"><?php echo $ttotal; ?></span></td>
+                    <td colspan="2"  ><div align="left" class="uk-text-bold">Average Score: <?php echo $ttotal/$classSize; ?></div>                      </td>
+                    <td><span class="uk-text-bold">Aggregate: <?php echo $aggregade; ?></span></td>
+                </tr>
+                         
+                </tbody>
+                
+                 
+                    </table> 
+        <?php }else{
+            echo "<p class='uk-text-danger'>No results to display</p>";
+        ?><?php }?>
+                <p>&nbsp;</p>     
+             </div><?php }  }
+    
+    ?> 
+        
+        
+        </tr>
   
-<script>
-    
- 
- var oTable = $('#gad').DataTable({
-     
-        
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url:  "{!! route('power_users.data') !!}"
-             
-        },
-        columns: [
-           
-        
-          {data: 'id', name: 'users.id'},
-           {data: 'staffID', name: 'tpoly_workers.staffID'},
-           
-            {data: 'Photo', name: 'Photo', orderable: false, searchable: false},
-            
-              {data: 'name', name: 'users.name'},
-               {data: 'email', name: 'users.email'},
-            {data: 'department', name: 'users.department'},
-            {data: 'role', name: 'users.role'},]
-              
-    });
-    
-
-    
-</script>
- 
-@endsection
+      </table> 

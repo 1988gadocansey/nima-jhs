@@ -24,6 +24,28 @@ class SystemController extends Controller
 
         
     }
+   public function getPhone($stuId){
+     $data= \DB::table('student')->where("indexNo",$stuId)->first();
+     return $data->parentPhone;
+             
+     
+ }
+ public function getCourseGrade($courseId,$year,$term,$student) {
+     
+     $data= \DB::table(' tbl_assesments')->where("indexNo",$stuId)->first();
+    //$query1 = $sql->Prepare("SELECT total from tbl_assesments where term='$term' and year='$year' and stuId='$student'and  courseId='$courseId' AND total>0");
+    //print_r($query1);
+    //$query = $sql->Execute($query1);
+
+    //$row = $query->FetchNextObject();
+    //return $row->TOTAL;
+  }
+ public function getShortCode($course) {
+     $data= \DB::table('courses')->where("code",$course)->first();
+     return $data;
+     
+ 
+  }
      public function getLibraries() {
         $library = Models\LibraryModel::
                 select('name', 'id')->orderBy("name")->get();
@@ -37,7 +59,22 @@ class SystemController extends Controller
        
          
     }
-    
+    public function getSignature($teacher){
+         
+        
+        $query=  \DB::table('staffs')->where("emp_number",$teacher)->select("firstname","surname")->first();
+         
+        
+        $fname=  str_split($query->firstname);
+                                   $f= $fname[0];
+				 $lname=  str_split($query->surname);
+                                 $l=$lname[0];
+                                  
+                                 return $f.'.'.$l;
+                              
+     
+    }
+
     public function age($birthdate, $pattern = 'eu')
         {
             $patterns = array(
@@ -130,6 +167,10 @@ class SystemController extends Controller
        
          
     }
+    public function getIndexNo($stuId) {
+        $sql= \DB::table('student')->where("id",$stuId)->first();
+        return $sql->indexNo;
+    }
     public function getHouseList() {
          
          
@@ -176,7 +217,15 @@ class SystemController extends Controller
        
          
     }
-    
+     public function getStudentProgram($program) {
+         
+         
+         $info = \DB::table('programme')->where("code",$program)->first();
+               
+         return $info->name;
+            
+         
+    }
     public function getStudentAccountInfo($indexno) {
          
          
@@ -481,7 +530,7 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
 
     // this is purposely for select box 
     public function getCourseList() {
-         $course = Models\CourseModel::orderBy("name")->lists("name","code");
+         $course = \DB::table('courses')->where("name","!=","")->orderBy("name")->lists("name","code");
                 return $course;
        
          
@@ -621,7 +670,7 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
 //        
 //    }
 //    
-    public function firesms($message,$phone,$receipient){
+   public function firesms($message,$phone,$receipient){
           
          
         
@@ -631,66 +680,53 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
             try {
 
                  
-                //$key = "83f76e13c92d33e27895";
-                $message = urlencode($message);
-                $phone=$phone; // because most of the numbers came from excel upload
-                 
-                 $phone="+233".\substr($phone,-9);
-            $url = 'http://txtconnect.co/api/send/'; 
-            $fields = array( 
-            'token' => \urlencode('a166902c2f552bfd59de3914bd9864088cd7ac77'), 
-            'msg' => \urlencode($message), 
-            'from' => \urlencode("TPOLY"), 
-            'to' => \urlencode($phone), 
-            );
-            $fields_string = ""; 
-                    foreach ($fields as $key => $value) { 
-                    $fields_string .= $key . '=' . $value . '&'; 
-                    } 
-                    \rtrim($fields_string, '&'); 
-                    $ch = \curl_init(); 
-                    \curl_setopt($ch, \CURLOPT_URL, $url); 
-                    \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true); 
-                    \curl_setopt($ch, \CURLOPT_FOLLOWLOCATION, true); 
-                    \curl_setopt($ch, \CURLOPT_POST, count($fields)); 
-                    \curl_setopt($ch, \CURLOPT_POSTFIELDS, $fields_string); 
-                    \curl_setopt($ch, \CURLOPT_SSL_VERIFYPEER, 0); 
-                    $result2 = \curl_exec($ch); 
-                    \curl_close($ch); 
-                    $data = \json_decode($result2); 
-                    $output=@$data->error;
-                    if ($output == "0") {
+                $phone="+233".\substr($phone,1,9);
+            $phone = str_replace(' ', '', $phone);
+                 $phone = str_replace('-', '', $phone);
+                 if (!empty($message) && !empty($phone)) {
+           // $key = "83f76e13c92d33e27895"; //your unique API key;
+            //$message=urlencode($message); //encode url;
+        $sender_id="Library";
+
+        $url = "http://sms.gadeksystems.com/smsapi?key=$key&to=$phone&msg=$message&sender_id=$sender_id";
+        //print_r($url);
+        $result = file_get_contents($url); //call url and store result;
+
+                   if ($result = 1000) {
+
                    $result="Message was successfully sent"; 
                    
                     }else{ 
-                    $result="Message failed to send. Error: " .  $output; 
+                    $result="Message failed to send. Error: " .  $result; 
                      
                     } 
                      
                 
-                $array=  $this->getSemYear();
-                $sem=$array[0]->SEMESTER;
-                $year=$array[0]->YEAR;
-                  $user = \Auth::user()->id;
+                 
+                  $user = \Auth::user()->fund;
                   $sms=new MessagesModel();
                     $sms->dates=\DB::raw("NOW()");
                     $sms->message=$message;
                     $sms->phone=$phone;
                     $sms->status=$result;
-                    $sms->type="Fees reminder";
-                    $sms->sender=$user;
-                    $sms->term=$sem;
-                    $sms->year=$year;
+                    $sms->type="reminder";
+                    $sms->sent_by=$user;
+                     
                     $sms->receipient=$receipient;
                      
                    $sms->save();
                    \DB::commit();
-               } catch (\Exception $e) {
+            }
+            
+                    }
+            catch (\Exception $e) {
                 \DB::rollback();
             }
-            }
+        }
         
     }
+   
+    
     /**
      * Get current sem and year
      *
@@ -910,9 +946,9 @@ if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::use
     }
     // return course array based on code
     public function getCourseByCodeObject($id) {
-        $mount = \DB::table('tpoly_mounted_courses')->where('ID',$id)->first();
+        $mount = \DB::table('subjectallocations')->where('id',$id)->first();
          
-         $course = \DB::table('tpoly_courses')->where('ID',$mount->COURSE)->get();
+         $course = \DB::table('courses')->where('code',$mount->subject)->get();
                  
         return @$course;
     }

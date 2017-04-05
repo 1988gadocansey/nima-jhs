@@ -22,6 +22,7 @@
     margin-bottom: 15px;
     width:926px;
 }
+
 /*.uk-table td{
     border:none;
 }
@@ -45,7 +46,7 @@
         @section('js')
         <script type="text/javascript">
 
-         //window.print();
+         window.print();
  
 
         </script>

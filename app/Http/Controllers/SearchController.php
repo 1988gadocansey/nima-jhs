@@ -25,7 +25,7 @@ class SearchController extends Controller
 	 
 	$queries = DB::table('student')
                 ->where('cardNo','LIKE', '%'.$term.'%')
-                
+                 ->orWhere('indexNo','LIKE', '%'.$term.'%')
 		 
                 ->orWhere('othernames', 'LIKE', '%'.$term.'%')
                 ->orWhere('surname', 'LIKE', '%'.$term.'%')
@@ -41,6 +41,27 @@ class SearchController extends Controller
 		else{
 	    $results[] = [ 'id' => $query->id, 'value' => $query->indexNo.','.$query->name ];
 	}
+	}
+return Response::json($results);
+}
+   public function autocompleteClass(){
+	$term = Input::get('term');
+	
+	$results = array();
+	
+	 
+	$queries = DB::table('classes')
+                ->where('name','LIKE', '%'.$term.'%')
+                 
+                
+		->take(500)->get();
+	
+	foreach ($queries as $query)
+	{
+		 
+		 
+	    $results[] = [ 'id' => $query->name, 'value' =>$query->name ];
+	 
 	}
 return Response::json($results);
 }

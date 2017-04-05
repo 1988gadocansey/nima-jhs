@@ -140,11 +140,11 @@ class AcademicCalenderController extends Controller {
         $markYear = $stmt[0]->enterResult;
         // dd($stmt);
         if ($semYear == 0 && $markYear == 0) {
-            $query = AcademicCalenderModel::where('id', $request->input("id"))->delete();
+              AcademicCalenderModel::where('id', $request->input("id"))->delete();
 
-            if ($query) {
+           
                 return redirect("/calender")->with("success", "<span style='font-weight:bold;font-size:13px;'> Calender </span>successfully deleted! ");
-            }
+          
         } else {
 
             return redirect("/calender")->with("error", "<span style='font-weight:bold;font-size:13px;'> Calender cannot be deleted because is in use.... that's open !!</span> ");

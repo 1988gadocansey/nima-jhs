@@ -108,13 +108,19 @@
                                              
                                         </div>
                                     </div>
+                  <div class="uk-form-row">
+                                <label>Type<span class="req uk-text-danger">*</span></label>
+                                <p></p>
+                                {{ Form::select('type', array(  'Elective'=>'Elective','Core'=>'Core'), null, ['class' => 'md-input','v-model'=>'type','v-form-ctrl'=>'','v-select'=>'',"required"=>""]) }}
+                                  
+                               </div>
                                 </div>
                               
                                 
                  
 
             <div class="uk-modal-footer uk-text-right">
-               <input type="submit" value="Save" id='save'v-show="applicationFormn.$valid"  class="md-btn   md-btn-success uk-margin-small-top">
+               <input type="submit" value="Save" id='save'  class="md-btn   md-btn-success uk-margin-small-top">
        <button type="button" class="md-btn md-btn-flat uk-modal-close md-btn-wave">Close</button>
             </div>
         </form>
@@ -182,6 +188,7 @@
                      <th class="filter-false remove sorter-false"  >NO</th>
                       <th>COURSE</th>
                      <th  style="text-align: ">CODE</th>
+                     <th  style="text-align: ">TYPE</th>
                      <th>PROGRAMME</th> 
                     
                       <th  class="filter-false remove sorter-false uk-text-center" colspan="2" data-priority="1">ACTION</th>   
@@ -197,6 +204,7 @@
                                             <td> {{ $data->perPage()*($data->currentPage()-1)+($index+1) }} </td>
                                             <td> {{ strtoupper(@$row->name) }}</td>
                                             <td> {{ strtoupper(@$row->code)	 }}</td>
+                                            <td> {{ strtoupper(@$row->type)	 }}</td>
                                             <td> {{strtoupper( @$row->programme->name)	 }}</td>
                                                
                                             <td class="uk-text-center"> 

@@ -124,6 +124,7 @@ Route::group(['middleware' => ['web']], function () {
      Route::get('/owing_paid', 'FeeController@owingAndPaid');
      Route::post('/fireOwingSMS', 'FeeController@sendFeeSMS');
     Route::get('search/autocomplete', 'SearchController@autocomplete');
+    Route::get('search/class', 'SearchController@autocompleteClass');
     
     
     // updating students levels based on indexno
@@ -169,7 +170,8 @@ Route::group(['middleware' => ['web']], function () {
     
      Route::get('/class/list','CourseController@classList');
     
-    
+     Route::get('/report/card/bulk','CourseController@bulkReport');
+    Route::post('/report/card/bulk','CourseController@bulkReport');
     Route::get('/grade_system/{type}/slug','GradeController@show');
     Route::post('/update_grades/','GradeController@update');
     Route::get('/house/view','HouseController@index');
@@ -212,10 +214,24 @@ Route::group(['middleware' => ['web']], function () {
     
     Route::post('/courses/allocation/update','CourseController@updateAllocation');
      
+    
+     Route::get('/systems/grades/delete', "CourseController@gradeModification");
+     Route::post('/grades/process/delete', "CourseController@ProcessGradeModification");
+    
+     Route::get('/systems/grades/recover', "CourseController@gradeRecovery");
+     Route::post('/grades/process/recover', "CourseController@ProcessGradeRecovery");
+    
+      Route::match(array("get", "post"), '/report/card', "CourseController@reportCard");
+  
+     
+     Route::get('/report/broadsheet', "CourseController@broadsheet");
+    
+     
+     
     Route::get('/upload/marks','CourseController@showFileUpload');
     Route::post('/upload/marks','CourseController@uploadMarks');
     Route::match(array("get", "post"), '/attendanceSheet', "CourseController@attendanceSheet");
-    Route::match(array("get", "post"), '/transcript', "CourseController@transcript");
+    Route::match(array("get", "post"), '/report/transcript', "CourseController@transcript");
     Route::match(array("get", "post"), '/upload/courses', "CourseController@uploadCourse");
     Route::get('/courseDownloadExcel/{type}', 'CourseController@courseDownloadExcel');
     Route::get('/marksDownloadExcel/{code}/code', 'CourseController@marksDownloadExcel');
@@ -309,6 +325,9 @@ Route::get( '/report/headmaster', "ClassMemberController@headMastersReport");
 Route::post('/report_headmaster', 'ClassMemberController@processHeadMasterReport');
 
 
+Route::get('/system/registration/batch', "CourseController@batchRegistration");
+Route::post( '/system/registration/batch/process', "CourseController@processBatchRegistration");
+   
      // system settings
     
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');

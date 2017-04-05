@@ -68,10 +68,10 @@
                 <td class="uk-text-center">@if($row->enterResult==1)<span class="uk-badge uk-badge-success">Opened</span><span> <a href='{{url("fireCalender/$row->ID/id/closeMark/action")}}' ><i title='Click to close entering of marks' onclick="return confirm('Are you sure you want to close entering of marks?' );" class="md-icon material-icons uk-text-danger">edit</i></span> @else <span class="uk-badge uk-badge-danger">Closed</span>&nbsp;&nbsp;<span> <a href='{{url("fireCalender/$row->ID/id/openMark/action")}}' ><i onclick="return confirm('Are you sure you want to open entering of marks?' );" title='Click to open entering of marks'  class="md-icon material-icons uk-text-success">edit</i></span> @endif</td>
                 <td class="uk-text-center">
                     @if($row->enterResult==0 &&$row->status==0)
-                      {!!Form::open(['action' => ['AcademicCalenderController@destroy', 'id'=>$row->ID], 'method' => 'DELETE','name'=>'myform' ,'style' => 'display: inline;'])  !!}
+                      {!!Form::open(['action' => ['AcademicCalenderController@destroy', 'id'=>$row->id], 'method' => 'DELETE','name'=>'myform' ,'style' => 'display: inline;'])  !!}
 
                                                    <i onclick="UIkit.modal.confirm('Are you sure you want to delete this item?', function(){ document.forms[0].submit(); });" title="click to delete calender" class="sidebar-menu-icon material-icons md-18 uk-text-danger">delete</i>
-                                                        <input type='hidden' name='item' value='{{$row->ID}}'/>  
+                                                        <input type='hidden' name='item' value='{{$row->id}}'/>  
                                                      {!! Form::close() !!}
                     @else
                     <span class="uk-badge uk-badge-success">Item in use</span>

@@ -86,7 +86,7 @@
                                         <label for="">Program <span class="req uk-text-danger">*</span></label>
                                         <p></p>
                                         <div class="md-input-wrapper md-input-filled">
-                                          {!!   Form::select('program',$program,old('program',''),array("required"=>"required","class"=>"md-input program","id"=>"program","v-model"=>"program","v-form-ctrl"=>"","style"=>"","v-select"=>"program")   )  !!}
+                                          {!!   Form::select('program',$program,old('program',''),array("required"=>"required","style"=>"width:100px","class"=>"md-input program","id"=>"program","v-model"=>"program","v-form-ctrl"=>"","style"=>"","v-select"=>"program")   )  !!}
                                     <span class="md-input-bar"></span>
                                         </div> 
                                 
@@ -96,8 +96,23 @@
 
                             </div>
                         </div>
+ <div class="uk-width-medium-1-5">
+                       <div class="uk-margin-small-top">
+                                
+                              
+                                        <label for="">Course Type <span class="req uk-text-danger">*</span></label>
+                                        <p></p>
+                                        <div class="md-input-wrapper md-input-filled">
+                                        {!! Form::select('type', array(''=>'select type',  'Elective'=>'Elective','Core'=>'Core'), null, ['class' => 'md-input type','v-model'=>'type','v-form-ctrl'=>'','v-select'=>'type',"required"=>""]) !!}
+                                   <span class="md-input-bar"></span>
+                                        </div> 
+                                
+                                
+                                
+                                <p class="uk-text-danger uk-text-small"  v-if="applicationForm.type.$error.required" >Course type is required</p>
 
-                         
+                            </div>
+ </div>
                       <input type="hidden" name="id" class="id" value="{{$key}}"/>
                         
                         
@@ -173,6 +188,7 @@ var vm = new Vue({
     name:"<?php echo $data->name ?>",
     code:"<?php echo @$data->code ?>",
     program:"<?php echo @$data->pcode ?>",
+   type:"<?php echo @$data->type ?>",
       
   
  options: [    ]  
@@ -189,7 +205,7 @@ var vm = new Vue({
 
             var program = $('.program').val();
              var code = $('.code').val();
-              var name = $('.name').val();
+              var name = $('.name').val();  var type = $('.type').val();
                var id = $('.id').val();
                       //alert(code);
                      
@@ -201,7 +217,7 @@ var vm = new Vue({
                                      
                                             type: "POST",
                                             url:"{{ url('/edit_course/course')}}",
-                                            data: { id:id,name:name, program:program,code:code }, //your form data to post goes 
+                                            data: { id:id,name:name, program:program,code:code,type:type }, //your form data to post goes 
                                             dataType: "json",
                                     }). done(function(data){
                 //  var objData = jQuery.parseJSON(data);

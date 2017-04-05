@@ -28,12 +28,992 @@ class CourseController extends Controller
        
         
     }
+     public function bulkReport(SystemController $sys,Request $request){
+
+         
+           if ($request->isMethod("get")) {
+
+            return view('courses.bulkReportCard');
+                             
+            } 
+            else{
+
+                $class=  explode(',',$request->input('q'));
+                $class=$class[0];
+                
+              
+                
+             $sql= Models\ClassModel::where("name",$class)->first();
+                     
+               
+               if(count($sql)==0){
+           
+                return redirect("/report/card/bulk")->with("error","<span style='font-weight:bold;font-size:13px;'> $request->input('q') does not exist!</span>");
+                }
+              else{
+                    
+                  $array=$sys->getSemYear();
+                   
+                 
+               $data=$this->cardHeaderBulk($sql, $sys)  ;
+              //$record=$this->generateCardBulk($sql->id,$sys);
+      return view("courses.bulkReport")->with("student",$data);
+         
+                  
+                   
+                  
+              }
+            }
+
+        
+
+    }
+    public function cardHeaderBulk($sql, SystemController $sys) {
+        $studentSArray=array();
+          $array = $sys->getSemYear();
+                $sem = $array[0]->term;
+                $year = $array[0]->year;
+                 $start = $array[0]->startDate;
+                   $end= $array[0]->endDate;
+                   
+           
+               $query=    Models\ClassMembersModel::
+                join('student', 'student.indexNo', '=', 'classmembers.student')
+                 -> join('classes', 'classes.name', '=', 'classmembers.class')
+                ->where('classmembers.year',$year)
+                ->where('classmembers.term',$sem)
+              
+                ->where('classmembers.class',$sql->name)
+                       ->where('student.currentClass',$sql->name)
+                ->orderBy("classmembers.class")->get()->toArray();
+                   
+                   foreach($query as $row){
+                        array_push($studentSArray, $row['student']);
+       
+                   }
+  //  dd($studentSArray);
+         
+    for($i=0;$i<  count($studentSArray);$i++){
+        $indexNo=$studentSArray;
+        $student= Models\ClassMembersModel::
+                join('student', 'student.indexNo', '=', 'classmembers.student')
+                 -> join('classes', 'classes.name', '=', 'classmembers.class')
+                ->where('classmembers.year',$year)
+                ->where('classmembers.term',$sem)
+               
+                       ->where('student.indexNo',$indexNo[$i])
+                 ->where('student.status','In School')
+                ->orderBy("student.indexNo")->first();
+        
+        ?>
+<div class="md-card">
+  
+        <div   class="uk-grid" data-uk-grid-margin>
+            <div class="table-responsive">
+            <table  border="0" cellspacing="0" align="center" >
+                        <tr></tr>
+                        <tr>
+                            <th height="341" valign="top" class="bod" scope="row"><table width="100%" border="0">
+                            <tr>
+                                <th align="center" valign="middle" scope="row"><table  style="margin-left: -29px"width="930" height="113" border="0">
+                                <tr>
+                                    <th align="center" valign="middle" scope="row">
+                                <fieldset>
+                                <table style="" width="882" height="113" border="0" >
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td class="heading_a uk-text-bold">NIMA JUNIOR HIGH SCHOOL</td>
+
+
+                                                </tr>
+                                                 
+                                                <tr>
+                                                    <td class="heading_c">Report Card for  <?php echo $year?> Academic Year, Term <?php echo $sem?>  </td>
+                                                </tr>
+                                                <Tr>
+                                                    <td class="heading_a">Position in Class<span class="uk-text-bold uk-text-success"> <?php echo $student->position  ?></span></td>
+                                                </Tr>
+                                            </table>
+                                        </td>
+                                        <td align='right'> <img src="<?php echo url('public/assets/img/logo.png')?>" style='width: 111px;height: auto;margin-left: -71px'/></td>
+                                    </tr>
+                                     
+                                        
+                                </table>
+                                </fieldset>
+                                
+                                </tr>
+
+
+                            </table>
+                            
+                            <div align="center">
+
+                                <table border='0' class=" " align="center"  width='900px'>
+                                    <tr>
+                                        <td width="" style="width:69%">
+                                            <center>
+                                                <table border='0' class="biodata" width='800px' width=""  style="margin-left:-27px" >
+                                                    <tbody>
+                                                         <tr>
+                                                            <td class="uk-text-bold"style="padding-right: px;">INDEX NUMBER</td> <td style="padding-right: 93px;"><?php echo $student->indexNo;?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold" style="">NAME</td> <td style="padding-right: 36px;"><?php echo strtoupper(  $student->surname.' '.$student->othernames)?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold"style="">HOUSE</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->house)?></td>
+                                                        </tr>
+                                                         <tr>
+                                                             <td class="uk-text-bold">PROGRAMME</td> <td style="padding-right: 177px;"><?php echo strtoupper($sys->getStudentProgram($student->programme))?></td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td class="uk-text-bold" style="">CLASS</td> <td style="padding-right: 36px;" class="uk-text-success uk-text-bold"><?PHP echo  strtoupper($student->currentClass) ; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold" style="">TERM ENDING</td> <td style="padding-right: 36px;"><?php echo  strtoupper($start )?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold" style="">NEXT TERM BEGINS</td> <td style="padding-right: 36px;"><?PHP echo  strtoupper($end); ?></td>
+                                                        </tr>
+                                                       
+                                                        
+
+
+                                                    </tbody></table> </center>
+                                        </td>
+                                        <td width="15">&nbsp;    
+                                        <img   style="width:130px;height: auto;margin-left: 2px"  <?php
+                                     $pic = $student->indexNo;
+                                      
+                                     ?>   src='<?php echo url("public/albums/students/$pic.jpg")?>' alt="  Affix student picture here"    />
+           
+                                        
+                                        </td>
+                                        
+                                    </tr>
+                                    </tr>
+                                </table> <!-- end basic infos -->
+
+  
+                                
+                                
+                               
+                            </div>
+                              
+</div>
+                            </tr>
+                        </table></th>
+                        </tr>
+                        <tr></tr>
+                    </table>
+
+     
+        
+     
+         
+                <table id="report"  align="center" style="margin-left: -5px"  height="90" class="uk-table uk-table-hover uk-table-nowrap "  border="1"  >
+      <thead >
+          <tr>
+            <td ><strong>Core Subjects</strong></td>
+              <td><strong>Class Score 30%</strong></td>
+              <td ><strong>Exam Score 70%</strong></td>
+              <td><strong>Total Score 100%</strong></td>
+              <td><div align="center"><strong>Grade</strong></div></td>
+              <td><div align="center"><strong>Position</strong></div></td>
+              <td><div align="center"><strong>Remarks  </strong></div></td>
+              <td><div align="center"><strong>Sign  </strong></div></td>
+            </tr>
+          </thead>
+        <tbody>
+  
+          <tr>
+            <?php 
+	  $data=Models\AcademicRecordsModel::
+                join('subjectallocations', 'assesmentsheet.courseId', '=', 'subjectallocations.id')
+                 -> join('courses', 'courses.code', '=', 'subjectallocations.subject')
+                ->where('assesmentsheet.indexNo',$indexNo[$i])
+                ->where('courses.type',"Core")
+                ->where('assesmentsheet.year',$year)
+                ->where('assesmentsheet.term',$sem)
+                ->orderBy("courses.type")->orderBy("courses.name")->get()->toArray();
+		  
+		  
+	$ttotal=0.0;
+        $aggregade=0;
+        $cout=0.0;
+                $t=count($data);
+ 
+                foreach($data as $r){
+               
+
+                ?>
+          <tr>
+            <td height="43" nowrap='nowrap' ><div align="left"><?php echo $r['name']; ?></div></td>
+              <td ><div align="center"><?php  echo ($r['cw1']+$r['cw2']+$r['cw3']+$r['hw1']+$r['hw2']+$r['ctest1']+$r['ctest2']+$r['project1']+$r['project2'])*0.3 ;?></div></td>
+              <td ><div align="center"><?php echo $r['exam'];?></div></td>
+              <td ><div align="center"><?php echo $r['total']; $ttotal+=$r['total']; if($r['total']>0){ $cout=$cout+100;}?></div></td>
+              <td width="81" >
+                <div align="center">
+                    
+                  <?php 
+                   $programme=$sys->getCourseProgrammeMounted($r['courseId']);
+                            
+                            $program=$sys->getProgramArray($programme);
+                              $gradeSys=$sys->getProgramByGradeSystem($programme);
+                              
+                            $gradeArray = $sys->getGrade($r['total'], $gradeSys);
+                           
+                              $grade = $gradeArray[0]->grade;
+                              $gradePoint=@$gradeArray[0]->value;
+                               $comment=@$gradeArray[0]->comment;
+                    			  echo $grade;
+				  
+				  $aggregade+=$gradePoint;
+				  ?>
+              </div></td>
+              <td width="80" ><div align="center"><?php echo $r['posInSubject'];?></div></td>
+              <td width="157"  ><div align="center"><?php echo $comment;
+                  ?></div></td>
+              <td width="157"  ><div align="center"><?php echo strtoupper($sys->getSignature($r['staff']));
+                  ?></div></td>
+              <?php 
+				  
+             } 
+             
+               $elective=Models\AcademicRecordsModel::
+                join('subjectallocations', 'assesmentsheet.courseId', '=', 'subjectallocations.id')
+                 -> join('courses', 'courses.code', '=', 'subjectallocations.subject')
+                ->where('assesmentsheet.indexNo',$indexNo[$i])
+                ->where('courses.type',"Elective")
+                ->where('assesmentsheet.year',$year)
+                ->where('assesmentsheet.term',$sem)
+                ->orderBy("courses.type")->orderBy("courses.name")->get()->toArray();
+	
+             
+             
+             ?>
+              
+          <tr><td class="uk-text-bold uk-text-italic"><div align="left" >Elective Subjects </div></td></tr>
+              
+       
+         
+  
+          <tr>
+            <?php 
+		  
+		  
+	$ttotal2=0.0;
+        $aggregade=0;
+        $cout2=0.0;
+                $t2=count($elective);
+ 
+                foreach($elective as $rs){
+               
+
+                ?>
+          <tr>
+            <td height="43" nowrap='nowrap' ><div align="left"><?php echo $r['name']; ?></div></td>
+              <td ><div align="center"><?php  echo ($rs['cw1']+$rs['cw2']+$rs['cw3']+$rs['hw1']+$rs['hw2']+$rs['ctest1']+$rs['ctest2']+$rs['project1']+$rs['project2'])*0.3 ;?></div></td>
+              <td ><div align="center"><?php echo $rs['exam'];?></div></td>
+              <td ><div align="center"><?php echo $rs['total']; $ttotal+=$rs['total']; if($rs['total']>0){ $cout2=$cout2+100;}?></div></td>
+              <td width="81" >
+                <div align="center">
+                    
+                  <?php 
+                   $programme=$sys->getCourseProgrammeMounted($r['courseId']);
+                            
+                            $program=$sys->getProgramArray($programme);
+                              $gradeSys=$sys->getProgramByGradeSystem($programme);
+                              
+                            $gradeArray = $sys->getGrade($r['total'], $gradeSys);
+                           
+                              $grade = $gradeArray[0]->grade;
+                              $gradePoint=@$gradeArray[0]->value;
+                               $comment=@$gradeArray[0]->comment;
+                    			  echo $grade;
+				  
+				  $aggregade+=$gradePoint;
+				  ?>
+              </div></td>
+              <td width="80" ><div align="center"><?php echo $rs['posInSubject'];?></div></td>
+              <td width="157"  ><div align="center"><?php echo $comment;
+                  ?></div></td>
+              <td width="157"  ><div align="center"><?php echo strtoupper($sys->getSignature($rs['staff']));
+                  ?></div></td>
+              <?php 
+				  
+             } ?>    
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+          </tr>
+              
+          <tr style="background-color: #ffff99">
+          
+              <td style="border-style: none" ><div align="right">Total Score : </div></td>
+            <td  style="border-style: none" ><?php echo ($ttotal2+$ttotal)."/".(+$cout+$cout2); ?></td>
+            <td  style="border-style: none" ><div align="right">Average Score : </div></td>
+            <td style="border-style: none" > <?php echo number_format(@(($ttotal+$ttotal2)/($t+$t2)), 2, '.', ',')."%"; ?> </td>
+            <td style="border-style: none" colspan="2" ><div align="right"></div></td>
+            <td  style="border-style: none" >&nbsp;</td>
+            <td style="border-style: none"></td>
+            </tr>
+          
+             
+          </tbody>
+      
+        
+
+      </table>
+         
+                <table class="uk-table"  style=" " height="496" border="0"  >
+      
+      <tr>
+        <td width="291" height="47"><div align="left"><span class="rp">ATTENDANCE</span>:
+          <b><?php 
+		
+          $queryInput= Models\ClassMembersModel::where("term",$sem)
+                  ->where("year",$year)
+                  ->where("student",$indexNo[$i])
+                  ->get()->toArray();
+		//dd($queryInput);
+           foreach(  $queryInput as $r){
+
+               echo $r['attendance']; ?></b>
+        </div></td>
+        <?php
+       if($sem==3){?>
+        <td width="231"><div align="right">PROMOTED TO : </div></td>
+        <td width="243"><div align="left">
+                <b>  <?php  echo strtoupper($r['promotedTo']); ?></b>
+        </div>
+          <div align="right"></div></td>
+           <?php }?>
+        
+      </tr>
+      <tr>
+        <td  colspan=""><div align="left"><span class="rp">CONDUCT</span> :  
+                <b>   <?php  echo strtoupper( $r['conduct']); ?></b>
+          </div></td>
+      
+        <td  colspan="" align="left"><span class="rp">ATTITUDE</span> : 
+            <b><?php  echo strtoupper($r['attitude']); ?></b></td>
+       
+        <td    align="left"><span class="rp">INTEREST</span> : 
+            <b><?php  echo strtoupper($r['interest']); ?></b></td>
+      </tr>
+      
+      <tr>
+        <td><div align="left">
+                <span class="rp">FORM MASTER'S REMARK:</span>  <b><?php echo strtoupper($r['house_mast_report']); ?> </b>
+          </div></td>
+      </tr>
+      <tr>
+        <td><div align="left">
+                <span class="rp">HOUSE MASTER'S REMARK:</span>  <b><?php echo strtoupper($r['form_mast_report']); ?> </b>
+          </div></td>
+      </tr>
+      <tr>
+        <td><div align="left">
+                <p><span class="rp">HEAD OF INSTITUTION'S REMARKS </span>: <b><?php echo strtoupper($r['head_mast_report']); }?></b></p>
+        </div>          
+          </label></td>
+      </tr>
+      <tr>
+          <td style="" colspan="4"align="center"> <img src='<?php echo url("public/assets/img/signature.png")?>' alt="..................."style="width:234px;height: auto" />          
+         
+      
+           <div align="center">  <br/>(Head Teacher )</div></td>
+         
+      </tr>
+      
+    </table>
+                
+                
+         
+            </div></div> <br clear="all" style="page-break-before: always"/><div align="center"><small>Powered by GadekSystems Cape Coast C/R Tel:+244505284060,+233241999094 www.gadeksystems.com</small></div>
+ </div>
+        
+<?php }}
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+     public function reportCard(SystemController $sys,Request $request){
+
+         
+           if ($request->isMethod("get")) {
+
+            return view('courses.showCard');
+                             
+            } 
+            else{
+
+                $student=  explode(',',$request->input('q'));
+                $student=$student[0];
+                
+              
+                
+             $sql=Models\StudentModel::where("indexNo",$student)->first();
+                     
+               
+               if(count($sql)==0){
+           
+                return redirect("/transcript")->with("error","<span style='font-weight:bold;font-size:13px;'> $request->input('q') does not exist!</span>");
+                }
+              else{
+                    
+                  $array=$sys->getSemYear();
+                   
+                 
+               $data=$this->cardHeader($sql, $sys)  ;
+              $record=$this->generateCard($sql->id,$sys);
+      return view("courses.reportCard")->with('grade',$record)->with("student",$data);
+         
+                  
+                   
+                  
+              }
+            }
+
+        
+
+    }
+    public function cardHeader($student, SystemController $sys) {
+          $array = $sys->getSemYear();
+                $sem = $array[0]->term;
+                $year = $array[0]->year;
+                 $start = $array[0]->startDate;
+                   $end= $array[0]->endDate;
+                   
+                    //dd($student);
+                   //$indexno=$sys->getIndexNo($student);
+                  
+                   $position= @Models\ClassMembersModel::where("student",$student->indexNo)
+                           ->where("year",$year)
+                           ->where("term",$sem)
+                           ->first();
+                   $classPosition=@$position->position;
+        ?>
+<div class="md-card">
+  
+        <div   class="uk-grid" data-uk-grid-margin>
+            <div class="table-responsive">
+            <table  border="0" cellspacing="0" align="center" >
+                        <tr></tr>
+                        <tr>
+                            <th height="341" valign="top" class="bod" scope="row"><table width="100%" border="0">
+                            <tr>
+                                <th align="center" valign="middle" scope="row"><table  style="margin-left: -29px"width="930" height="113" border="0">
+                                <tr>
+                                    <th align="center" valign="middle" scope="row">
+                                <fieldset>
+                                <table style="" width="882" height="113" border="0" >
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td class="heading_a uk-text-bold">NIMA JUNIOR HIGH SCHOOL</td>
+
+
+                                                </tr>
+                                                 
+                                                <tr>
+                                                    <td class="heading_c">Report Card for  <?php echo $year?> Academic Year, Term <?php echo $sem?>  </td>
+                                                </tr>
+                                                <Tr>
+                                                    <td class="heading_a">Position in Class<span class="uk-text-bold uk-text-success"> <?php echo $classPosition  ?></span></td>
+                                                </Tr>
+                                            </table>
+                                        </td>
+                                        <td align='right'> <img src="<?php echo url('public/assets/img/logo.png')?>" style='width: 111px;height: auto;margin-left: -71px'/></td>
+                                    </tr>
+                                     
+                                        
+                                </table>
+                                </fieldset>
+                                
+                                </tr>
+
+
+                            </table>
+                            
+                            <div align="center">
+
+                                <table border='0' class=" " align="center"  width='900px'>
+                                    <tr>
+                                        <td width="" style="width:69%">
+                                            <center>
+                                                <table border='0' class="biodata" width='800px' width=""  style="margin-left:-27px" >
+                                                    <tbody>
+                                                         <tr>
+                                                            <td class="uk-text-bold"style="padding-right: px;">INDEX NUMBER</td> <td style="padding-right: 93px;"><?php echo $student->indexNo;?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold" style="">NAME</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->TITLE .' '.  $student->name)?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold"style="">HOUSE</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->house)?></td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td class="uk-text-bold">PROGRAMME</td> <td style="padding-right: 177px;"><?php echo strtoupper($student->program->name)?></td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td class="uk-text-bold" style="">CLASS</td> <td style="padding-right: 36px;" class="uk-text-success uk-text-bold"><?PHP echo  strtoupper($student->currentClass) ; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold" style="">TERM ENDING</td> <td style="padding-right: 36px;"><?php echo  strtoupper($start )?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="uk-text-bold" style="">NEXT TERM BEGINS</td> <td style="padding-right: 36px;"><?PHP echo  strtoupper($end); ?></td>
+                                                        </tr>
+                                                       
+                                                        
+
+
+                                                    </tbody></table> </center>
+                                        </td>
+                                        <td width="15">&nbsp;    
+                                        <img   style="width:130px;height: auto;margin-left: 2px"  <?php
+                                     $pic = $student->indexNo;
+                                      
+                                     ?>   src='<?php echo url("public/albums/students/$pic.jpg")?>' alt="  Affix student picture here"    />
+           
+                                        
+                                        </td>
+                                        
+                                    </tr>
+                                    </tr>
+                                </table> <!-- end basic infos -->
+
+  
+                                
+                                
+                               
+                            </div>
+                              
+</div>
+                            </tr>
+                        </table></th>
+                        </tr>
+                        <tr></tr>
+                    </table>
+
+    <?php
+        
+    }
+    public function generateCard($sql,  SystemController $sys){
+          
+                    $array = $sys->getSemYear();
+                $sem = $array[0]->term;
+                $year = $array[0]->year;
+                 
+                  $data=Models\AcademicRecordsModel::
+                join('subjectallocations', 'assesmentsheet.courseId', '=', 'subjectallocations.id')
+                 -> join('courses', 'courses.code', '=', 'subjectallocations.subject')
+                ->where('assesmentsheet.stuId',$sql)
+                ->where('courses.type',"Core")
+                ->where('assesmentsheet.year',$year)
+                ->where('assesmentsheet.term',$sem)
+                ->orderBy("courses.type")->orderBy("courses.name")->get()->toArray();
+	  ?>
+
+      
+       
+         
+                <table id="report"  align="center" style="margin-left: -5px"  height="90" class="uk-table uk-table-hover uk-table-nowrap "  border="1"  >
+      <thead >
+          <tr>
+            <td ><strong>Core Subjects</strong></td>
+              <td><strong>Class Score 30%</strong></td>
+              <td ><strong>Exam Score 70%</strong></td>
+              <td><strong>Total Score 100%</strong></td>
+              <td><div align="center"><strong>Grade</strong></div></td>
+              <td><div align="center"><strong>Position</strong></div></td>
+              <td><div align="center"><strong>Remarks  </strong></div></td>
+              <td><div align="center"><strong>Sign  </strong></div></td>
+            </tr>
+          </thead>
+        <tbody>
+  
+          <tr>
+            <?php 
+		  
+		  
+	$ttotal=0.0;
+        $aggregade=0;
+        $cout=0.0;
+                $t=count($data);
+ 
+                foreach($data as $r){
+               
+
+                ?>
+          <tr>
+            <td height="43" nowrap='nowrap' ><div align="left"><?php echo $r['name']; ?></div></td>
+              <td ><div align="center"><?php  echo ($r['cw1']+$r['cw2']+$r['cw3']+$r['hw1']+$r['hw2']+$r['ctest1']+$r['ctest2']+$r['project1']+$r['project2'])*0.3 ;?></div></td>
+              <td ><div align="center"><?php echo $r['exam'];?></div></td>
+              <td ><div align="center"><?php echo $r['total']; $ttotal+=$r['total']; if($r['total']>0){ $cout=$cout+100;}?></div></td>
+              <td width="81" >
+                <div align="center">
+                    
+                  <?php 
+                   $programme=$sys->getCourseProgrammeMounted($r['courseId']);
+                            
+                            $program=$sys->getProgramArray($programme);
+                              $gradeSys=$sys->getProgramByGradeSystem($programme);
+                              
+                            $gradeArray = $sys->getGrade($r['total'], $gradeSys);
+                           
+                              $grade = $gradeArray[0]->grade;
+                              $gradePoint=@$gradeArray[0]->value;
+                               $comment=@$gradeArray[0]->comment;
+                    			  echo $grade;
+				  
+				  $aggregade+=$gradePoint;
+				  ?>
+              </div></td>
+              <td width="80" ><div align="center"><?php echo $r['posInSubject'];?></div></td>
+              <td width="157"  ><div align="center"><?php echo $comment;
+                  ?></div></td>
+              <td width="157"  ><div align="center"><?php echo strtoupper($sys->getSignature($r['staff']));
+                  ?></div></td>
+              <?php 
+				  
+             } 
+             
+               $elective=Models\AcademicRecordsModel::
+                join('subjectallocations', 'assesmentsheet.courseId', '=', 'subjectallocations.id')
+                 -> join('courses', 'courses.code', '=', 'subjectallocations.subject')
+                ->where('assesmentsheet.stuId',$sql)
+                ->where('courses.type',"Elective")
+                ->where('assesmentsheet.year',$year)
+                ->where('assesmentsheet.term',$sem)
+                ->orderBy("courses.type")->orderBy("courses.name")->get()->toArray();
+	
+             
+             
+             ?>
+              
+          <tr><td class="uk-text-bold uk-text-italic"><div align="left" >Elective Subjects </div></td></tr>
+              
+       
+         
+  
+          <tr>
+            <?php 
+		  
+		  
+	$ttotal2=0.0;
+        $aggregade=0;
+        $cout2=0.0;
+                $t2=count($elective);
+ 
+                foreach($elective as $rs){
+               
+
+                ?>
+          <tr>
+            <td height="43" nowrap='nowrap' ><div align="left"><?php echo $r['name']; ?></div></td>
+              <td ><div align="center"><?php  echo ($rs['cw1']+$rs['cw2']+$rs['cw3']+$rs['hw1']+$rs['hw2']+$rs['ctest1']+$rs['ctest2']+$rs['project1']+$rs['project2'])*0.3 ;?></div></td>
+              <td ><div align="center"><?php echo $rs['exam'];?></div></td>
+              <td ><div align="center"><?php echo $rs['total']; $ttotal+=$rs['total']; if($rs['total']>0){ $cout2=$cout2+100;}?></div></td>
+              <td width="81" >
+                <div align="center">
+                    
+                  <?php 
+                   $programme=$sys->getCourseProgrammeMounted($r['courseId']);
+                            
+                            $program=$sys->getProgramArray($programme);
+                              $gradeSys=$sys->getProgramByGradeSystem($programme);
+                              
+                            $gradeArray = $sys->getGrade($r['total'], $gradeSys);
+                           
+                              $grade = $gradeArray[0]->grade;
+                              $gradePoint=@$gradeArray[0]->value;
+                               $comment=@$gradeArray[0]->comment;
+                    			  echo $grade;
+				  
+				  $aggregade+=$gradePoint;
+				  ?>
+              </div></td>
+              <td width="80" ><div align="center"><?php echo $rs['posInSubject'];?></div></td>
+              <td width="157"  ><div align="center"><?php echo $comment;
+                  ?></div></td>
+              <td width="157"  ><div align="center"><?php echo strtoupper($sys->getSignature($rs['staff']));
+                  ?></div></td>
+              <?php 
+				  
+             } ?>    
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+          </tr>
+              
+          <tr style="background-color: #ffff99">
+          
+              <td style="border-style: none" ><div align="right">Total Score : </div></td>
+            <td  style="border-style: none" ><?php echo ($ttotal2+$ttotal)."/".(+$cout+$cout2); ?></td>
+            <td  style="border-style: none" ><div align="right">Average Score : </div></td>
+            <td style="border-style: none" > <?php echo number_format(@(($ttotal+$ttotal2)/($t+$t2)), 2, '.', ',')."%"; ?> </td>
+            <td style="border-style: none" colspan="2" ><div align="right"></div></td>
+            <td  style="border-style: none" >&nbsp;</td>
+            <td style="border-style: none"></td>
+            </tr>
+          
+             
+          </tbody>
+      
+        
+
+      </table>
+         
+                <table class="uk-table"  style=" " height="496" border="0"  >
+      
+      <tr>
+        <td width="291" height="47"><div align="left"><span class="rp">ATTENDANCE</span>:
+          <b><?php 
+		
+          $queryInput= Models\ClassMembersModel::where("term",$sem)
+                  ->where("year",$year)
+                  ->where("student",$sys->getIndexNo($sql))
+                  ->get()->toArray();
+		// dd($queryInput);
+           foreach(  $queryInput as $r){
+
+               echo $r['attendance']; ?></b>
+        </div></td>
+        <?php
+       if($sem==3){?>
+        <td width="231"><div align="right">PROMOTED TO : </div></td>
+        <td width="243"><div align="left">
+                <b>  <?php  echo strtoupper($r['promotedTo']); ?></b>
+        </div>
+          <div align="right"></div></td>
+           <?php }?>
+        
+      </tr>
+      <tr>
+        <td  colspan=""><div align="left"><span class="rp">CONDUCT</span> :  
+                <b>   <?php  echo strtoupper( $r['conduct']); ?></b>
+          </div></td>
+      
+        <td  colspan="" align="left"><span class="rp">ATTITUDE</span> : 
+            <b><?php  echo strtoupper($r['attitude']); ?></b></td>
+       
+        <td    align="left"><span class="rp">INTEREST</span> : 
+            <b><?php  echo strtoupper($r['interest']); ?></b></td>
+      </tr>
+      
+      <tr>
+        <td><div align="left">
+                <span class="rp">FORM MASTER'S REMARK:</span>  <b><?php echo strtoupper($r['house_mast_report']); ?> </b>
+          </div></td>
+      </tr>
+      <tr>
+        <td><div align="left">
+                <span class="rp">HOUSE MASTER'S REMARK:</span>  <b><?php echo strtoupper($r['form_mast_report']); ?> </b>
+          </div></td>
+      </tr>
+      <tr>
+        <td><div align="left">
+                <p><span class="rp">HEAD OF INSTITUTION'S REMARKS </span>: <b><?php echo strtoupper($r['head_mast_report']); }?></b></p>
+        </div>          
+          </label></td>
+      </tr>
+      <tr>
+          <td style="" colspan="4"align="center"> <img src='<?php echo url("public/assets/img/signature.png")?>' alt="..................."style="width:234px;height: auto" />          
+         
+      
+           <div align="center">  <br/>(Head Teacher )</div></td>
+         
+      </tr>
+      
+    </table>
+                
+                
+         
+            </div></div></div>
+        
+   <?php }
+  
      public function log_query() {
         \DB::listen(function ($sql, $binding, $timing) {
             \Log::info('showing query', array('sql' => $sql, 'bindings' => $binding));
         }
         );
     }
+     public function batchRegistration(Request $request,SystemController $sys){
+         
+        if (@\Auth::user()->department == 'top' || @\Auth::user()->role == 'HOD' || @\Auth::user()->role == 'Support') {
+            if ($request->isMethod("get")) {
+ 
+                   return view('courses.batchRegister')->with('year', $sys->years())
+                               // ->with("course",$sys->getMountedCourseList())
+                                ->with("level",$sys->getClassList())
+                                ->with('program', $sys->getProgramList());
+                                
+          
+            }
+            else{
+                
+            }
+        }
+        else{
+            return redirect("/dashboard");
+        }
+    }
+     public function processBatchRegistration(Request $request,SystemController $sys){
+         $this->validate($request, [
+
+            'program' => 'required',
+        ]);
+       $array = $sys->getSemYear();
+        $sem = $array[0]->term;
+        $year = $array[0]->year;
+        
+        
+        
+          
+           // $policy=$sys->getRegiistrationProtocol($student);
+            $level=$request->input("level");
+            $program=$request->input("program");
+           
+            if(!empty($level)){
+                   @Models\AcademicRecordsModel::query()->where('class', $level)
+                       ->where('year', $year)
+                       ->where('term', $sem)
+                       ->delete() ;
+               $allocation=Models\CourseAllocationModel::where("year",$year)->where("term",$sem)->where("teacherId","!=","")->get();
+                 
+                foreach($allocation as $row){
+                     
+                     $student=  Models\StudentModel::where("currentClass",$row->classId)->where("programme",$program)->where("status","In School")->get();
+               
+                    
+                    foreach($student as $data){
+                         
+                         
+                        $class=$row->classId;
+                        $indexno=$data->indexNo;
+                        $studentId=$data->id;
+                        $lecturer=$row->teacherId;
+                        $courseCode=$row->subject;
+                       $course=$row->id;
+                         
+                         
+                        
+                           $queryModel=new Models\AcademicRecordsModel();
+                           $queryModel->courseId=$course;
+                           $queryModel->courseCode=$courseCode;
+                           $queryModel->indexNo=$indexno;
+                            
+                           $queryModel->stuId=$studentId;
+                           
+                           $queryModel->year=$year;
+                           $queryModel->term=$sem;
+                           $queryModel->class=$class;
+                           $queryModel->staff=$lecturer;
+                           
+                           $queryModel->save();
+                           // \DB::commit();
+                             
+                         
+                          Models\CourseAllocationModel::where("classId",$level)->where("year",$year)->where("term",$sem)->update(array("open"=>1));
+                           
+                           
+                           \DB::commit();
+                  }
+              }
+            }
+            else{
+                $allocation=Models\CourseAllocationModel::where("year",$year)->where("term",$sem)->where("teacherId","!=","")->get();
+                 
+                foreach($allocation as $row){
+                     
+                     $student=  Models\StudentModel::where("programme",$program)->where("status","In School")->get();
+               
+                    
+                    foreach($student as $data){
+                         
+                         
+                        $class=$row->classId;
+                        $indexno=$data->indexNo;
+                        $studentId=$data->id;
+                        $lecturer=$row->teacherId;
+                        $courseCode=$row->subject;
+                       $course=$row->id;
+                         
+                         
+                        
+                           $queryModel=new Models\AcademicRecordsModel();
+                           $queryModel->courseId=$course;
+                           $queryModel->courseCode=$courseCode;
+                           $queryModel->indexNo=$indexno;
+                            
+                           $queryModel->stuId=$studentId;
+                           
+                           $queryModel->year=$year;
+                           $queryModel->term=$sem;
+                           $queryModel->class=$class;
+                           $queryModel->staff=$lecturer;
+                            $queryModel->save();
+                           // \DB::commit();
+                             
+                         
+                          Models\CourseAllocationModel::where("classId",$level)->where("year",$year)->where("term",$sem)->update(array("open"=>1));
+                           
+                           
+                           \DB::commit();
+                  }
+              }
+                        // overwrite registered courses for the sem and the year
+                     
+                        
+                           
+            }
+         
+            //return redirect('/courses')->with("success",  " <span style='font-weight:bold;font-size:13px;'>Courses registered successfully</span> ");
+                     
+        
+        
+    }
+   
      public function uploadMounted(SystemController $sys,Request $request){
 
          if (@\Auth::user()->role == 'HOD' || @\Auth::user()->role == 'Support' || @\Auth::user()->role == 'Registrar' || @\Auth::user()->department == 'top') {
@@ -317,7 +1297,7 @@ class CourseController extends Controller
     }
     public function transcript(SystemController $sys,Request $request){
 
-        if (@\Auth::user()->role == 'HOD' || @\Auth::user()->role == 'Support' || @\Auth::user()->role == 'Registrar' || @\Auth::user()->department == 'top') {
+        if (@\Auth::user()->role == 'HOD' || @\Auth::user()->role == 'Lecturer' || @\Auth::user()->role == 'Registrar' || @\Auth::user()->department == 'top') {
 
            if ($request->isMethod("get")) {
 
@@ -331,7 +1311,7 @@ class CourseController extends Controller
                 
               
                 
-             $sql=Models\StudentModel::where("INDEXNO",$student)->first();
+             $sql=Models\StudentModel::where("indexNo",$student)->first();
                      
                
                if(count($sql)==0){
@@ -341,12 +1321,10 @@ class CourseController extends Controller
               else{
                     
                   $array=$sys->getSemYear();
-                  $sem=$array[0]->term;
-                  $year=$array[0]->year;
-                  
+                   
                  
                $data=$this->transcriptHeader($sql, $sys)  ;
-              $record=$this->generateTranscript($sql->ID,$sys);
+              $record=$this->generateTranscript($sql->id,$sys);
       return view("courses.transcript")->with('grade',$record)->with("student",$data);
          
                   
@@ -359,6 +1337,7 @@ class CourseController extends Controller
 
     }
     public function transcriptHeader($student, SystemController $sys) {
+        
         ?>
 <div class="md-card">
   
@@ -378,7 +1357,7 @@ class CourseController extends Controller
                                         <td>
                                             <table>
                                                 <tr>
-                                                    <td class="heading_a uk-text-bold">TAKORADI TECHNICAL UNIVERSITY</td>
+                                                    <td class="heading_a uk-text-bold">NIMA JUNIOR HIGH SCHOOL</td>
 
 
                                                 </tr>
@@ -386,7 +1365,7 @@ class CourseController extends Controller
                                                     <td class="heading_a">Directorate of Academics Affairs</td>
                                                 </Tr>
                                                 <tr>
-                                                    <td class="heading_c">Statement of Results</td>
+                                                    <td class="heading_c">Transcript</td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -411,25 +1390,25 @@ class CourseController extends Controller
                                                 <table border='0' class="biodata" width='800px' width=""  style="margin-left:-19px" >
                                                     <tbody>
                                                          <tr>
-                                                            <td class="uk-text-bold"style="padding-right: px;">INDEX NUMBER</td> <td style="padding-right: 93px;"><?php echo $student->INDEXNO;?></td>
+                                                            <td class="uk-text-bold"style="padding-right: px;">INDEX NUMBER</td> <td style="padding-right: 93px;"><?php echo $student->indexNo;?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="uk-text-bold" style="">NAME</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->TITLE .' '.  $student->NAME)?></td>
+                                                            <td class="uk-text-bold" style="">NAME</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->TITLE .' '.  $student->name)?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="uk-text-bold"style="">GENDER</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->SEX)?></td>
+                                                            <td class="uk-text-bold"style="">GENDER</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->gender)?></td>
                                                         </tr>
                                                          <tr>
-                                                            <td class="uk-text-bold">PROGRAMME</td> <td style="padding-right: 177px;"><?php echo strtoupper($student->program->PROGRAMME)?></td>
+                                                            <td class="uk-text-bold">PROGRAMME</td> <td style="padding-right: 177px;"><?php echo strtoupper($student->program->name)?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="uk-text-bold" style="">DATE OF ADMISSION</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->DATE_ADMITTED)?></td>
+                                                            <td class="uk-text-bold" style="">DATE OF ADMISSION</td> <td style="padding-right: 36px;"><?php echo strtoupper($student->dateAdmitted)?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="uk-text-bold" style="">DATE OF BIRTH</td> <td style="padding-right: 36px;"><?PHP echo  $student->DATEOFBIRTH ; ?></td>
+                                                            <td class="uk-text-bold" style="">DATE OF BIRTH</td> <td style="padding-right: 36px;"><?PHP echo  $student->dob ; ?></td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="uk-text-bold" style="">CLASS</td> <td style="padding-right: 36px;" class="uk-text-success uk-text-bold"><?PHP echo  strtoupper($student->CLASS) ; ?></td>
+                                                            <td class="uk-text-bold" style="">CLASS</td> <td style="padding-right: 36px;" class="uk-text-success uk-text-bold"><?PHP echo  strtoupper($student->currentClass) ; ?></td>
                                                         </tr>
                                                         
 
@@ -438,7 +1417,7 @@ class CourseController extends Controller
                                         </td>
                                         <td width="15">&nbsp;    
                                         <img   style="width:130px;height: auto;margin-left: 14px"  <?php
-                                     $pic = $student->INDEXNO;
+                                     $pic = $student->indexNo;
                                       
                                      ?>   src='<?php echo url("public/albums/students/$pic.jpg")?>' alt="  Affix student picture here"    />
            
@@ -467,7 +1446,7 @@ class CourseController extends Controller
     }
     public function generateTranscript($sql,  SystemController $sys){
          
-       $records=  Models\AcademicRecordsModel::where("student",$sql)->groupBy("year")->groupBy("level")->orderBy("level")->get();
+       $records=  Models\AcademicRecordsModel::where("stuId",$sql)->groupBy("year")->groupBy("class")->orderBy("class")->get();
                                 
 
 	  ?>
@@ -478,22 +1457,17 @@ class CourseController extends Controller
         
           <td  style=" " align="left"> 
             <?php  
-              $gpoint=0.0;
-                $totcredit=0;
-                $totgpoint=0.0;
-                $gcredit=0;
-                $b=0.0;
-                $a=0;
+               
             foreach ($records as $row){
             for($i=1;$i<3;$i++){
-             $query=  Models\AcademicRecordsModel::where("student",$sql)->where("year",$row->year)->where("sem",$i)->get()->toArray();
+             $query=  Models\AcademicRecordsModel::where("stuId",$sql)->where("year",$row->year)->where("term",$i)->get()->toArray();
                 
               
                 if(count($query)>0){
 
-                echo "<div class='uk-text-bold' align='left' style='margin-left:33px'>year : ".$row->year."    ";
-                echo ", term : ".$i;
-                 echo ", LEVEL :  " .$row->level." <hr/></div>";
+                echo "<div class='uk-text-bold' align='left' style='margin-left:33px'>Year : ".$row->year."    ";
+                echo ", Term : ".$i;
+                 echo ", Class :  " .$row->class." <hr/></div>";
                  
 
                   
@@ -503,60 +1477,73 @@ class CourseController extends Controller
          ?>
          
             <div class="uk-overflow-container">
-           <table style="margin-left:32px"  border="0" style=""width='940px'  class="uk-table uk-table-striped">
+           <table style="margin-left:32px"  border="0" style=""width='940px'  class="uk-table uk-table-striped ">
                 <thead >
-                    <tr class="uk-text-bold" style="background-color:#1A337E;color:white;">
-                    <td  width="86">CODE</td>
-                    <td  width="558">COURSE</td>
-                    <td align='center' width="48">CR</td>
-                    <td align='center' width="49">GD</td>
-                    <td align='center'width="95" >GP</td>
+                    <tr class="uk-text-bold" style="background-color:#EAF2D3;color:white;">
+                     <th>SUBJECT</th>
+
+                    <th style=';' class='ui-corner-top'>MARKS SCORED</th>
+                    <th style='' class='ui-corner-top'>POSITION</th>
+                    <th style='text-align: center' style='width:15%;' class='ui-corner-top'>GRADE</th>
+                    <th style='text-align:left;padding-left:1%;' class='ui-corner-top'>REMARKS</th>
+
                     </tr>
                 </thead>
                 <tbody>
                   <?php 
-		  
+		  $classSize=count($query);
+                  $ttotal=0.00;
+                   $aggregade=0.00;
                 foreach ($query as $rs){
 
                  
 
                 ?>
                   <tr>
-                    <td> <?php $object=$sys->getCourseByCodeObject($rs['course']); echo @$object[0]->COURSE_CODE; ?></td>
+                   <?php $object=$sys->getCourseByCodeObject($rs['courseId']);  ?> 
                     <td> <?php 
-			 echo @$object[0]->COURSE_NAME;?> </td>	
+			 echo strtoupper(@$object[0]->name);?> </td>	
+                     
+                    <td><?php echo $rs['total']?></td>
+                    <td><?php echo $rs['posInSubject'];?></td>
+                    <?php
                     
-                    <td align='center'><?php  $gcredit+=$rs['credits'];   $totcredit+=$rs['credits'];$a+=$totcredit; if($rs['credits']){ echo $rs['credits'];} else{echo "IC";};?></td>
-                    <td align='center'><?php  if($rs['grade']){ echo $rs['grade'];} else{echo "IC";}?></td>
-                    <td align='center'>
-                      <?php   $gpoint+=$rs['gpoint']; $totgpoint+=$rs['gpoint'];$b+=$totgpoint;if($rs['gpoint']){ echo $rs['gpoint'];} else{echo "0";}  ?></td>
+                        $programme=$sys->getCourseProgrammeMounted($rs['courseId']);
                             
+                            $program=$sys->getProgramArray($programme);
+                              $gradeSys=$sys->getProgramByGradeSystem($programme);
+                              
+                            $gradeArray = $sys->getGrade($rs['total'], $gradeSys);
+                           
+                              $grade = $gradeArray[0]->grade;
+                              $gradePoint=@$gradeArray[0]->value;
+                               $comment=@$gradeArray[0]->comment;
+                    
+                    ?>
+                    <td style='text-align: center'><?php echo $grade;$ttotal+=$rs['total']; ?></td>
+                    <td> 
+                      <?php
+                      
+                     			  echo  strtoupper($comment);
+				   
+				 
+				  $aggregade+=$gradePoint;
+				  ?>
+                    </td>
                      
-                     
+	  
                     <?php 
                      } ?>
                   </tr>
                   <tr>
                      
-                      <td>&nbsp</td>
-                    
-                      <td class="uk-text-bold"><span>GPA</span> <?php echo  number_format(@($gpoint/$gcredit), 2, '.', ',');?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
                        
-                    <td class="uk-text-bold" align='center'><?php echo $gcredit; ?></td>
-                    <td >&nbsp;</td>
-                    <td class="uk-text-bold" align='center'><?php echo $gpoint; ?>&nbsp;</td>
-                  </tr>
-                  <tr>
-                     
-                      <td>&nbsp</td>
-                    
-                      <td class="uk-text-bold"><span>CGPA</span> <?php echo  number_format(@($totgpoint/$totcredit), 2, '.', ',');?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
-                       
-                    <td class="uk-text-bold" align='center'><?php echo   $totcredit; ?></td>
-                    <td >&nbsp;</td>
-                    <td class="uk-text-bold" align='center'><?php echo $totgpoint;   $b="";$a=""; ?>&nbsp;</td>
-                  </tr>
-                        
+                      <td colspan="1"><div align="right" class="uk-text-bold">Total Score: </div></td>
+                    <td><span class="uk-text-bold"><?php echo $ttotal; ?></span></td>
+                    <td colspan="2"  ><div align="left" class="uk-text-bold">Average Score: <?php echo $ttotal/$classSize; ?></div>                      </td>
+                    <td><span class="uk-text-bold">Aggregate: <?php echo $aggregade; ?></span></td>
+                </tr>
+                         
                 </tbody>
                 
                  
@@ -740,6 +1727,25 @@ class CourseController extends Controller
                          return response()->json(['status'=>'success','message'=>' Subject allocated to staff successfully ']);
       
      }
+     public function broadsheet(Request $request,SystemController $sys) {
+           if($request->user()->isSupperAdmin  ||     @\Auth::user()->department=="top" ){
+       
+          $courses= Models\CourseModel::query() ;
+          }
+          elseif( @\Auth::user()->role=="Lecturer" || @\Auth::user()->role=="Registrar") {
+            $courses = Models\CourseModel::where('pcode', '!=', '')->whereHas('programs', function($q) {
+            $q->whereHas('departments', function($q) {
+                $q->whereIn('deptCode', array(@\Auth::user()->department));
+            });
+        }) ;
+        }
+         return view('courses.broadsheet')->with('year', $sys->years())
+                               ->with('class', $sys->getClassList());
+            
+        
+        
+        
+     }
     /**
      * Display a list of all of the user's task.
      *
@@ -836,6 +1842,200 @@ class CourseController extends Controller
                         ->with('program', $sys->getProgramList())
                         ->with('year',$sys->years());
     }
+    public function gradeModification(SystemController $sys,Request $request){
+
+        if ( @\Auth::user()->role== 'Head Master' ||  @\Auth::user()->role== 'Admin') {
+
+           if ($request->isMethod("get")) {
+
+            return view('courses.deleteGrades')->with('year', $sys->years())
+                                ->with('class', $sys->getClassList())
+                                ->with("course",$sys->getCourseList())
+                              
+                                 
+                                ->with('program', $sys->getProgramList());
+                                
+                             
+            } 
+            
+        }
+        elseif(@\Auth::user()->role=='Admin' && @\Auth::user()->department=='top'){
+             return view('courses.deleteGrades')->with('year', $sys->years())
+                                   ->with('class', $sys->getClassList())
+                                ->with("course",$sys->getCourseList())
+                              
+                                 
+                                ->with('program', $sys->getProgramList());
+                            
+        }
+        else{
+                 return redirect("/dashboard");
+            }
+     }
+     
+      public function ProcessGradeModification(SystemController $sys,Request $request){
+
+                 $this->validate($request, [
+             
+            'class'=>'required',
+           
+            'semester'=>'required',
+            'year'=>'required',
+             
+                ]);
+        
+               //dd($request);
+               $course=$request->input("course");
+                $class=$request->input("class");
+                $year=$request->input("year");
+                $semester=$request->input("semester");
+                
+                if(empty($course)){
+                    $query= Models\AcademicRecordsModel::where("class",$class)->where("term",$semester)
+                            ->where("year",$year) ;
+                }
+                else{
+                       $query= Models\AcademicRecordsModel::where("class",$class)->where("term",$semester)
+                            ->where("year",$year)->where("courseCode",$course) ;
+                       
+                }
+                $data=$query->get();
+                  
+                 foreach($data as $row){
+                        $result=new Models\DeletedGradesModel();
+                        $result->courseId=$row->courseId;
+                        $result->courseCode=$row->courseCode;
+                        $result->stuId=$row->stuId;
+                        $result->indexNo=$row->indexNo;
+                         
+                        $result->cw1=$row->cw1;
+                        $result->cw2=$row->cw2;
+                        $result->cw3=$row->cw3;
+                        $result->hw1=$row->hw1;
+                        $result->hw2=$row->hw2;
+                        $result->ctest1=$row->ctest1;
+                        $result->ctest2=$row->ctest2;
+                        $result->project1=$row->project1;
+                        $result->project2=$row->project2;
+                        $result->exam=$row->exam;
+                        $result->total=$row->total;
+                        $result->gpoint=$row->gpoint;
+                        $result->comments=$row->comments;
+                        $result->year=$row->year;
+                        $result->term=$row->term;
+                        $result->posInSubject=$row->posInSubject;
+                        $result->class=$row->class;
+                         $result->staff=$row->staff;
+                      $result->inputeddate=$row->inputeddate;
+                        $result->save();
+                       
+                            
+                        }
+                       
+                        $query->delete();
+                        
+                        
+                        
+                        
+           }
+          public function gradeRecovery(SystemController $sys,Request $request){
+
+          if ( @\Auth::user()->role== 'Head Master' ||  @\Auth::user()->role== 'Admin') {
+
+           if ($request->isMethod("get")) {
+
+            return view('courses.recoverGrades')->with('year', $sys->years())
+                              ->with('class', $sys->getClassList())
+                                ->with("course",$sys->getCourseList())
+                              
+                                 
+                                ->with('program', $sys->getProgramList());
+                            
+                             
+            } 
+            
+        }
+        elseif(@\Auth::user()->role=='Admin'&& @\Auth::user()->department=='top' ){
+             return view('courses.recoverGrades')->with('year', $sys->years())
+                               ->with('class', $sys->getClassList())
+                                ->with("course",$sys->getCourseList())
+                              
+                                 
+                                ->with('program', $sys->getProgramList());
+                            
+        }
+        else{
+                 return redirect("/dashboard");
+            }
+     }
+       public function ProcessGradeRecovery(SystemController $sys,Request $request){
+
+                 $this->validate($request, [
+             
+            'class'=>'required',
+            
+            'semester'=>'required',
+            'year'=>'required',
+             
+                ]);
+          
+                  $course=$request->input("course");
+                $class=$request->input("class");
+                $year=$request->input("year");
+                $semester=$request->input("semester");
+                
+                if(empty($course)){
+                    $query= Models\DeletedGradesModel::where("class",$class)->where("term",$semester)
+                            ->where("year",$year) ;
+                }
+                else{
+                       $query= Models\DeletedGradesModel::where("class",$class)->where("term",$semester)
+                            ->where("year",$year)->where("courseCode",$course) ;
+                       
+                }
+                $data=$query->get();
+                  
+                 foreach($data as $row){
+                        $result=new Models\AcademicRecordsModel();
+                     $result->courseId=$row->courseId;
+                        $result->courseCode=$row->courseCode;
+                        $result->stuId=$row->stuId;
+                        $result->indexNo=$row->indexNo;
+                         
+                        $result->cw1=$row->cw1;
+                        $result->cw2=$row->cw2;
+                        $result->cw3=$row->cw3;
+                        $result->hw1=$row->hw1;
+                        $result->hw2=$row->hw2;
+                        $result->ctest1=$row->ctest1;
+                        $result->ctest2=$row->ctest2;
+                        $result->project1=$row->project1;
+                        $result->project2=$row->project2;
+                        $result->exam=$row->exam;
+                        $result->total=$row->total;
+                        $result->gpoint=$row->gpoint;
+                        $result->comments=$row->comments;
+                        $result->year=$row->year;
+                        $result->term=$row->term;
+                        $result->posInSubject=$row->posInSubject;
+                        $result->class=$row->class;
+                         $result->staff=$row->staff;
+                      $result->inputeddate=$row->inputeddate;
+                        $result->save();
+                       
+                            
+                        }
+                       
+                        $query->delete();
+                        
+                        
+                        
+                        
+           
+           
+      } 
+       
+      
     public function viewRegistered(Request $request,SystemController $sys , User $user, Models\AcademicRecordsModel $record) {
         
         //$this->authorize('update',$record); // in Controllers
@@ -845,8 +2045,8 @@ class CourseController extends Controller
         $array = $sys->getSemYear();
         $sem = $array[0]->term;
         $year = $array[0]->year;
-        $person=@\Auth::user()->staffID;
-        $lecturer=@\Auth::user()->staffID;
+        $person=@\Auth::user()->fund;
+        $lecturer=@\Auth::user()->fund;
 
        // dd($request->user()->isSupperAdmin);
         if(@\Auth::user()->role=='Lecturer' || @\Auth::user()->role=='HOD' ||@\Auth::user()->role=='Dean'){
@@ -857,7 +2057,7 @@ class CourseController extends Controller
          * lecturer is available to him
          */
         
-          $courses= Models\AcademicRecordsModel::query()->where('lecturer', $person) ;
+          $courses= Models\AcademicRecordsModel::query()->where('staff', $person) ;
            
           
         }
@@ -885,17 +2085,17 @@ class CourseController extends Controller
         if ($request->has('year') && trim($request->input('year')) != "") {
             $courses->where("year", "=", $request->input("year", ""));
         }
-         $data = $courses->groupby('course')->paginate(100);
+         $data = $courses->groupby('courseCode')->paginate(100);
          
          $request->flashExcept("_token");
          
          foreach ($data as $key => $row) {
                    
-                    $arr=$sys->getCourseCodeByID($row->course);
+                    $arr=$sys->getCourseCodeByID($row->courseCode);
                    // dd($arr);
                      $data[$key]->CODE=$arr;
 
-                     $total=$sys->totalRegistered($sem,$year,$row->course,$row->level, $lecturer);
+                     $total=$sys->totalRegistered($sem,$year,$row->courseCode,$row->level, $lecturer);
                      $data[$key]->REGISTERED=$total;
                 }
         
@@ -952,6 +2152,7 @@ class CourseController extends Controller
                 'name' => 'required',
                 'program' => 'required',
                 'code' => 'required',
+                 'type' => 'required',
                  
             ]);
 
@@ -960,11 +2161,13 @@ class CourseController extends Controller
             $name = strtoupper($request->input('name'));
             $program = strtoupper($request->input('program'));
             $code = strtoupper($request->input('code'));
+            $type =  $request->input('type') ;
 
             $course = new Models\CourseModel();
             $course->name = $name;
             $course->pcode= $program;
             $course->code = $code;
+            $course->type = $type;
             $course->createdBy= $user;
              
 
@@ -1106,7 +2309,7 @@ class CourseController extends Controller
                 ->where('assesmentsheet.courseCode',$code)
                 ->where('assesmentsheet.staff',$lecturer)
                 ->where('assesmentsheet.year',$year)
-                ->where('assesmentsheet.year',$sem)
+                ->where('assesmentsheet.term',$sem)
                 ->select('student.indexNo','student.name','assesmentsheet.cw1','assesmentsheet.cw2','assesmentsheet.cw3','assesmentsheet.hw1','assesmentsheet.hw2','assesmentsheet.ctest1','assesmentsheet.ctest2','assesmentsheet.project1','assesmentsheet.project2','assesmentsheet.exam')->get();
           	 
 		return Excel::create('continuous_assessment', function($excel) use ($data) {
@@ -1306,23 +2509,23 @@ class CourseController extends Controller
                             
                             
                               
-                     $inde=0;
+                     $counter=0;
                      
                      $row=count($rankQuery);
                      $oldtotal=-1;
                      $repeat=0;
                     foreach($rankQuery as $query){
                 
-                    $inde++;
+                    $counter++;
                     $currentotal=$query->total;
                      
-                    if($oldtotal==$currentotal){}else{$in=$inde; }
+                    if($oldtotal==$currentotal){}else{$in=$counter; }
                      $oldtotal=$currentotal;
-                     $position=$in."/".$row;
+                     $position=$counter."/".$row;
                     
                       
                       
-                      Models\AcademicRecordsModel::where("id",$keyData)->update(array("posInSubject"=>$position));
+                      Models\AcademicRecordsModel::where("id",$query->id)->update(array("posInSubject"=>$position));
                      
                      }
                             
@@ -1337,22 +2540,22 @@ class CourseController extends Controller
                                                         ->get();
                        
                      
-                        $inde=0;
+                        $index=0;
  
                         $row2=count($querySubjectPosition);
                         foreach($querySubjectPosition as $input){
                        
 
-                        $inde++;
+                        $index++;
                         $currentotal=$input->total;
-                        if($oldtotal==$currentotal){}else{$in=$inde; }
+                        if($oldtotal==$currentotal){}else{$inx=$index; }
                          $oldtotal=$currentotal;
 
-                          $subjectPosition=$in."/".$row2;
+                          $subjectPosition=$inx."/".$row2;
                          //echo "_";
                            //print_r($in_);
                           
-                          Models\ClassMembersModel::where("student",$studentData)
+                          Models\ClassMembersModel::where("id",$input->id)
                                         ->where("year",$year)
                                         ->where("term",$sem)
                                         ->update(array("position"=>$subjectPosition));
@@ -1615,17 +2818,19 @@ class CourseController extends Controller
                     'program' => 'required',
                     'name' => 'required',
                     'code' => 'required',
+                       'type' => 'required',
                     
                 ]);
                   $name=$request->input("name");
                     $code=$request->input("code");
+                     $type=$request->input("type");
                     $program=$request->input("program");
                      $id=$request->input("id");
                    // dd($program);
                 \DB::beginTransaction();
                 try {
                    
-                    $query = @Models\CourseModel::where("id", $id)->update(array("name" => $name, "code" => $code, "pcode" => $program));
+                    $query = @Models\CourseModel::where("id", $id)->update(array("name" => $name, "type"=>$type,"code" => $code, "pcode" => $program));
                     \DB::commit();
                      
                         if( $query){

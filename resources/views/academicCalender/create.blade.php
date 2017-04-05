@@ -51,7 +51,7 @@
                                             
                                             <label for="wizard_email">Start Date<span class="req uk-text-danger">*</span></label>
                                             <p></p>
-                                             <input type="text" name="start" class="md-input" data-uk-datepicker="{format:'DD/MM/YYYY'}"   v-model="doa"  v-form-ctrl   >
+                                            <input type="text" name="start" required="" class="md-input" data-uk-datepicker="{format:'DD/MM/YYYY'}"   v-model="start"  v-form-ctrl   >
                                            
                                             <p class="uk-text-danger uk-text-small"  v-if="applicationForm.semester.$error.required" >Start date is required</p>
 
@@ -63,7 +63,7 @@
                                             
                                             <label for="wizard_email">End Date<span class="req uk-text-danger">*</span></label>
                                             <p></p>
-                                            <input type="text" name="end" class="md-input" data-uk-datepicker="{format:'DD/MM/YYYY'}"   v-model="doa"  v-form-ctrl   >
+                                            <input type="text" required=""name="end" class="md-input" data-uk-datepicker="{format:'DD/MM/YYYY'}"   v-model="end"  v-form-ctrl   >
                                             <p class="uk-text-danger uk-text-small"  v-if="applicationForm.end.$error.required" >End date is required</p>
 
                                         </div>
@@ -79,7 +79,7 @@
                 
       <table align="center">
        
-        <tr><td><input type="submit" value="Save" id='save'v-show="applicationForm.$valid"  class="md-btn   md-btn-success uk-margin-small-top">
+        <tr><td><input type="submit" value="Save" id='save'  class="md-btn   md-btn-success uk-margin-small-top">
       <input type="reset" value="Clear" class="md-btn   md-btn-default uk-margin-small-top">
     </td></tr></table>
             </form>

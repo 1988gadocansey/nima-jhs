@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class AcademicRecordsModel extends Model
+class DeletedGradesModel extends Model
 {
      use LogsActivity;
     //
@@ -14,18 +14,12 @@ class AcademicRecordsModel extends Model
      *
      * @var string
      */
-    protected $table = 'assesmentsheet';
-    protected static $logAttributes = ['courseCode', 'student','quiz1','quiz2','quiz3','midSem1','exam','grade','sem','year'];
-    protected $primaryKey="id";
+    protected $table = 'deletedGrades';
+     protected $primaryKey="id";
     protected $guarded = ['id'];
     public $timestamps = false;
     
-    public function courseMount(){
-        return $this->belongsTo('App\Models\CourseAllocationModel', "courseCode","subject");
-    }
-     public function student(){
-        return $this->belongsTo('App\Models\StudentModel', "stuId","indexNo");
-    }
+    
       protected $casts = [
         'lecturer' => 'int',
     ];
@@ -40,5 +34,5 @@ class AcademicRecordsModel extends Model
     public function academic(){
         return $this->belongsTo('App\Models\StudentModel', "indexNo","indexNo");
     }
-     
+      
 }

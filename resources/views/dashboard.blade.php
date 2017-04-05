@@ -141,7 +141,7 @@
                     </div>
                 </div>
                     @endif
-                 @if( @Auth::user()->department=='top' ||  @Auth::user()->role=='Lecturer' ||  @Auth::user()->role=='HOD')
+                 @if( @Auth::user()->department=='top' ||  @Auth::user()->role=='Lecturer' ||@Auth::user()->role=='Class Teacher' ||  @Auth::user()->role=='Head Master'||@Auth::user()->role=='Lecturer' )
                 
 <!--                <div>
                     <div class="md-card md-card-hover md-card-overlay">
@@ -163,7 +163,7 @@
                 <div>
                      <div class="md-card md-card-hover md-card-overlay">
                         <div class="md-card-content">
-                            <a  href='{{url("/registered_courses")}}'>  <img src="{{url('public/assets/img/dashboard/classlist.png')}}"/></a>
+                            <a  href='{{url("class/list")}}'>  <img src="{{url('public/assets/img/dashboard/classlist.png')}}"/></a>
                         </div>
                         <div class="md-card-overlay-content">
                             <div class="uk-clearfix md-card-overlay-header">
@@ -176,6 +176,7 @@
                         </div>
                     </div>
                 </div>
+@if( @Auth::user()->department=='top')
                  <div>
                      <div class="md-card md-card-hover md-card-overlay">
                         <div class="md-card-content">
@@ -192,7 +193,7 @@
                         </div>
                     </div>
                 </div>
-                  
+                  @endif
                 <div>
                      <div class="md-card md-card-hover md-card-overlay">
                         <div class="md-card-content">

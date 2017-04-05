@@ -230,26 +230,24 @@
                             <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
                            
                             <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
-                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
-                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
-                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
+                                 <li><a href='{!! url("/report/transcript") !!}'>View Transcript</a></li>
+                          <li><a href='{!! url("/report/card") !!}'>Print Report Cards</a></li>
                         @endif
                             @if( @Auth::user()->role=='Class Teacher')
                             <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
                            
                             <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
-                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
-                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
-                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
+                                 <li><a href='{!! url("/report/transcript") !!}'>View Transcript</a></li>
+                            <li><a href='{!! url("/report/card") !!}'>Print Report Cards</a></li>
                             <li> <a href='{!! url("/report/classteacher") !!}'>Class Teacher's Report</a></li>
                             @endif
                              @if( @Auth::user()->role=='House Master')
                             <li> <a href='{!! url("/class/list") !!}'>Continuous Assessment</a></li>
                            
                             <li><a href='{!! url("/upload/marks") !!}'>Upload Marks from Excel </a></li>
-                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
-                           <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
-                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
+                                     <li><a href='{!! url("/report/transcript") !!}'>View Transcript</a></li>
+                       
+                              <li><a href='{!! url("/report/card") !!}'>Print Report Cards</a></li>
                             <li> <a href='{!! url("/report/housemaster") !!}'>House Masters Report</a></li>
                             @endif
                           @if( @Auth::user()->role=='Admin' || @Auth::user()->department=='top' || @Auth::user()->role=='HOD')
@@ -273,14 +271,15 @@
                            <li><a href='{!! url("/system/registration/batch") !!}'>Open Subjects for assessment</a></li>
                           
                            
-                            <li><a href='{!! url("/mounted_view") !!}'>View running  Subjects</a></li>
-                             <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
+                              <li><a href='{!! url("/systems/grades/delete") !!}'>Delete uploaded grades</a></li>
                            <li><a href='{!! url("/systems/grades/recover") !!}'>Recover Deleted grades</a></li>
                             <li><a href='{!! url("/attendanceSheet") !!}'>Print Exam Attendance Sheet</a></li>
-                            <li><a href='{!! url("/attendanceSheet") !!}'>Print Report Cards</a></li>
-                           
-                            <li><a href='{!! url("/transcript") !!}'>Transcript</a></li>
-                             <li><a href='{!! url("/broadsheet/noticeboard") !!}'>Broadsheet Noticeboard</a></li>
+                              <li><a href='{!! url("/report/card") !!}'>Print Report Cards</a></li>
+                         
+                         <li><a href='{!! url("/report/card/bulk") !!}'>Print Bulk Report Cards</a></li>  
+                               <li><a href='{!! url("/report/transcript") !!}'>View Transcript</a></li>
+                       
+                             <li><a href='{!! url("/report/broadsheet") !!}'>Broadsheet Noticeboard</a></li>
                              
                           @endif
                              
